@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30225.117
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "github-tutors-service", "github-tutors-service.csproj", "{3560AEA4-EED1-4916-AA0F-1E65848CE485}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "github-experts-service", "github-experts-service.csproj", "{3560AEA4-EED1-4916-AA0F-1E65848CE485}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

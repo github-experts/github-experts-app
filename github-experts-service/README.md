@@ -1,4 +1,4 @@
-# github-tutors-service
+# github-experts-service
 
 ## Setup
 

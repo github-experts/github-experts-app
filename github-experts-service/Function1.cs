@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 
-namespace github_tutors_service
+namespace github_experts_service
 {
     public static class Function1
     {
@@ -55,7 +55,7 @@ namespace github_tutors_service
             log.LogInformation("Fetching Github identity using token {githubToken}", githubToken);
 
             var githubClient = new HttpClient();
-            githubClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("github-tutors-service")));
+            githubClient.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue(new ProductHeaderValue("github-experts-service")));
             githubClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
             githubClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", githubToken);
             githubClient.BaseAddress = new Uri("https://api.github.com");

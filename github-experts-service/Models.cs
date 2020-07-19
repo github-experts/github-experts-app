@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace github_tutors_service
+namespace github_experts_service
 {
     public class AADIdentity
     {

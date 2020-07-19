@@ -1,4 +1,4 @@
-# github-tutors-ui
+# github-experts-ui
 
 ## Setup
 
