@@ -70,6 +70,7 @@ if (!(Test-Path ./node_modules -PathType Container))
   npm install
 }
 
+$env:REACT_APP_API_ROOT = "https://$backendHostName/api"
 npm run build
 
 az storage blob upload-batch `

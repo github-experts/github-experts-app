@@ -16,12 +16,15 @@ export default function Jitsi() {
     script.onload = () => {
       jitsi = new window.JitsiMeetExternalAPI('meet.jit.si', {
         roomName,
-        width: 500,
-        height: 500,
+        width: '100%',
+        height: '99.5%',
         parentNode: jitsiNode.current,
       });
       jitsi.getIFrame().onload = () => setLoading(false);
-      jitsi.addEventListener('readyToClose', () => sessionDone(roomName));
+      jitsi.addEventListener('readyToClose', () => {
+        sessionDone(roomName);
+        window.location = document.referrer || window.location.origin;
+      });
     };
     document.body.appendChild(script);
     return () => {
@@ -36,9 +39,5 @@ export default function Jitsi() {
     return <Loading />;
   }
 
-  return (
-    <div>
-      <div ref={jitsiNode} />
-    </div>
-  );
+  return <div ref={jitsiNode} />;
 }
