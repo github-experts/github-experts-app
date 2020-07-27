@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import Loading from 'layout/Loading';
 
-const VideoCall = lazy(() => import('video-call/Jitsi'));
+const VideoCall = lazy(() => import('layout/VideoCall'));
 const Home = lazy(() => import('layout/Home'));
 
 export default function App() {
