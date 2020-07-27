@@ -1,7 +1,31 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Loading from 'layout/Loading';
-import { sessionDone } from 'video-call/events';
+
+function sessionDone(roomName) {
+  fetch(`${process.env.REACT_APP_API_ROOT}/calldone`, {
+    method: 'POST',
+    headers: {
+      // TODO: once auth is integrated into the frontend, add Authorization header here to pass-through B2C Bearer token
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      roomName,
+    }),
+  })
+    .then((response) => {
+      if (response.status !== 200) {
+        throw response;
+      }
+      console.log(`Notified server of session ${roomName} end`);
+    })
+    .catch((error) =>
+      console.log(
+        `Error notifying server of session end for room ${roomName}`,
+        error
+      )
+    );
+}
 
 export default function Jitsi() {
   const jitsiNode = useRef();
@@ -16,12 +40,15 @@ export default function Jitsi() {
     script.onload = () => {
       jitsi = new window.JitsiMeetExternalAPI('meet.jit.si', {
         roomName,
-        width: 500,
-        height: 500,
+        width: '100%',
+        height: '99.5%',
         parentNode: jitsiNode.current,
       });
       jitsi.getIFrame().onload = () => setLoading(false);
-      jitsi.addEventListener('readyToClose', () => sessionDone(roomName));
+      jitsi.addEventListener('readyToClose', () => {
+        sessionDone(roomName);
+        window.location = document.referrer || window.location.origin;
+      });
     };
     document.body.appendChild(script);
     return () => {
@@ -36,9 +63,5 @@ export default function Jitsi() {
     return <Loading />;
   }
 
-  return (
-    <div>
-      <div ref={jitsiNode} />
-    </div>
-  );
+  return <div ref={jitsiNode} />;
 }
