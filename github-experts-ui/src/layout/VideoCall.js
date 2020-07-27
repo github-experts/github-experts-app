@@ -8,7 +8,7 @@ function sessionDone(roomName) {
     headers: {
       // TODO: once auth is integrated into the frontend, add Authorization header here to pass-through B2C Bearer token
       'Content-Type': 'application/json',
-    }
+    },
   })
     .then((response) => {
       if (response.status !== 200) {
