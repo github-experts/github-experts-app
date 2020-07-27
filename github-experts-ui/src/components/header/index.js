@@ -1,17 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
-import GithubLogo from '../../assets/github-logo.svg';
+import GithubLogo from 'assets/github-logo.svg';
 import { StyledLink } from 'components/StyledLink';
 
 export const Header = styled(({ className, headerOptions, children }) => {
   return (
     <header className={`${className} d-flex Header`}>
-      <p className="title d-flex">
+      <div className="title d-flex">
         <img src={GithubLogo} alt="" />
         <p className="header-items">Tutors</p>
-      </p>
-      {headerOptions.map((item) => (
-        <StyledLink to={item.path}>
+      </div>
+      {headerOptions.map((item, i) => (
+        <StyledLink key={i} to={item.path}>
           <p className="nav-items Header-item">{item.text}</p>
         </StyledLink>
       ))}
