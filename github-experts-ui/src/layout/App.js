@@ -10,8 +10,16 @@ export default function App() {
     <HashRouter>
       <Suspense fallback={<Loading />}>
         <Switch>
-          <Route exact path="/videocall/apprtc/:roomName" component={AppRTCVideoCall} />
-          <Route exact path="/videocall/jitsi/:roomName" component={JitsiVideoCall} />
+          <Route
+            exact
+            path="/videocall/apprtc/:roomName"
+            component={AppRTCVideoCall}
+          />
+          <Route
+            exact
+            path="/videocall/jitsi/:roomName"
+            component={JitsiVideoCall}
+          />
         </Switch>
       </Suspense>
     </HashRouter>

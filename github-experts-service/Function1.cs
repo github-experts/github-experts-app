@@ -1,19 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Headers;
-using System.Net.Http;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
-
-namespace github_experts_service
+namespace GithubExpertsService
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Net.Http;
+    using System.Net.Http.Headers;
+    using System.Text.Json;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Http;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.Azure.WebJobs;
+    using Microsoft.Azure.WebJobs.Extensions.Http;
+    using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Primitives;
+
     public static class Function1
     {
         [FunctionName("Function1")]
@@ -25,7 +25,7 @@ namespace github_experts_service
             {
                 return new ObjectResult("Missing id token")
                 {
-                    StatusCode = 401
+                    StatusCode = 401,
                 };
             }
 
@@ -48,7 +48,7 @@ namespace github_experts_service
             {
                 return new ObjectResult("Missing github token")
                 {
-                    StatusCode = 401
+                    StatusCode = 401,
                 };
             }
 
