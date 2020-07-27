@@ -3,14 +3,13 @@ import { useParams } from 'react-router-dom';
 import Loading from 'layout/Loading';
 
 function sessionDone(roomName, durationInMinutes) {
-  fetch(`${process.env.REACT_APP_API_ROOT}/calldone`, {
-    method: 'POST',
+  fetch(`${process.env.REACT_APP_API_ROOT}/calldone/${roomName}`, {
+    method: 'PATCH',
     headers: {
       // TODO: once auth is integrated into the frontend, add Authorization header here to pass-through B2C Bearer token
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      roomName,
       durationInMinutes,
     }),
   })
