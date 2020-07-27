@@ -4,7 +4,7 @@ import Loading from 'layout/Loading';
 
 function sessionDone(roomName, durationInMinutes) {
   var status = 'completed';
-  fetch(`${process.env.REACT_APP_API_ROOT}/calldone/${roomName}`, {
+  fetch(`${process.env.REACT_APP_API_ROOT}/Appointment/${roomName}`, {
     method: 'PATCH',
     headers: {
       // TODO: once auth is integrated into the frontend, add Authorization header here to pass-through B2C Bearer token
