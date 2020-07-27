@@ -2,7 +2,9 @@
 
 [Product Spec Document](https://microsoft-my.sharepoint.com/:w:/p/panikole/EdCE5t9cWE9GpAbjg3tDrooBvJyDWIMtD19TJxV4bPciyg?e=9FP0OQ)
 
-## Continuous deployment
+## Continuous integration and deployment
+
+[![Linting Github Action](https://github.com/github-experts/github-experts-app/workflows/lint/badge.svg)](https://github.com/github-experts/github-experts-app/actions?query=workflow%3Alint)
 
 [![Deployment Github Action](https://github.com/github-experts/github-experts-app/workflows/deploy/badge.svg)](https://github.com/github-experts/github-experts-app/actions?query=workflow%3Adeploy)
 

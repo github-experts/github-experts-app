@@ -1,0 +1,33 @@
+name: lint
+
+on: [pull_request]
+
+jobs:
+  lint-dotnet:
+    runs-on: 'windows-latest'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+
+      - run: dotnet build -c Release
+        working-directory: github-experts-service
+
+  lint-javascript:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+
+      - run: npm ci
+        working-directory: github-experts-ui
+
+      - run: npm run lint
+        working-directory: github-experts-ui

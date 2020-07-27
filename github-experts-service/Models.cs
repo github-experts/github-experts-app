@@ -1,8 +1,8 @@
-using System.Collections.Generic;
-using System.Text.Json.Serialization;
-
-namespace github_experts_service
+namespace GithubExpertsService
 {
+    using System.Collections.Generic;
+    using System.Text.Json.Serialization;
+
     public class AADIdentity
     {
         [JsonPropertyName("id_token")]
