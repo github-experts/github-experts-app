@@ -1,0 +1,255 @@
+{
+	"info": {
+		"_postman_id": "0df540f5-9ba1-4957-b130-8f83209b44d2",
+		"name": "Hackathon",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "DownloadBooking",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "eed97b1fd2ab4b7e94ad7b77d4daa30a",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://github-experts.azure-api.net/DownloadBooking/1234",
+					"protocol": "https",
+					"host": [
+						"github-experts",
+						"azure-api",
+						"net"
+					],
+					"path": [
+						"DownloadBooking",
+						"1234"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get an Appointment",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "eed97b1fd2ab4b7e94ad7b77d4daa30a",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://github-experts.azure-api.net/Appointment/1234",
+					"protocol": "https",
+					"host": [
+						"github-experts",
+						"azure-api",
+						"net"
+					],
+					"path": [
+						"Appointment",
+						"1234"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Appointments for an Expert",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "eed97b1fd2ab4b7e94ad7b77d4daa30a",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://github-experts.azure-api.net/Appointment/1234",
+					"protocol": "https",
+					"host": [
+						"github-experts",
+						"azure-api",
+						"net"
+					],
+					"path": [
+						"Appointment",
+						"1234"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Appointments for an Expert",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "eed97b1fd2ab4b7e94ad7b77d4daa30a",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://github-experts.azure-api.net/Appointments/patniko",
+					"protocol": "https",
+					"host": [
+						"github-experts",
+						"azure-api",
+						"net"
+					],
+					"path": [
+						"Appointments",
+						"patniko"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Daily Availability for an Expert",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "eed97b1fd2ab4b7e94ad7b77d4daa30a",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://github-experts.azure-api.net/DailyAvailability/{repo}/{handle}?startdate=2020-07-01&enddate=2020-07-31&tz=america/new_york",
+					"protocol": "https",
+					"host": [
+						"github-experts",
+						"azure-api",
+						"net"
+					],
+					"path": [
+						"DailyAvailability",
+						"{repo}",
+						"{handle}"
+					],
+					"query": [
+						{
+							"key": "startdate",
+							"value": "2020-07-01"
+						},
+						{
+							"key": "enddate",
+							"value": "2020-07-31"
+						},
+						{
+							"key": "tz",
+							"value": "america/new_york"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Monthly Availability for an Expert",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "eed97b1fd2ab4b7e94ad7b77d4daa30a",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://github-experts.azure-api.net/experts/patniko?startdate=2020-07-01&enddate=2020-08-30&tz=america/new_york",
+					"protocol": "https",
+					"host": [
+						"github-experts",
+						"azure-api",
+						"net"
+					],
+					"path": [
+						"experts",
+						"patniko"
+					],
+					"query": [
+						{
+							"key": "startdate",
+							"value": "2020-07-01"
+						},
+						{
+							"key": "enddate",
+							"value": "2020-08-30"
+						},
+						{
+							"key": "tz",
+							"value": "america/new_york"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Experts for a Repo",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "eed97b1fd2ab4b7e94ad7b77d4daa30a",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://github-experts.azure-api.net/Experts/patniko%2fgithub-experts",
+					"protocol": "https",
+					"host": [
+						"github-experts",
+						"azure-api",
+						"net"
+					],
+					"path": [
+						"Experts",
+						"patniko%2fgithub-experts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Schedule of Appointments for a repo",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Ocp-Apim-Subscription-Key",
+						"value": "eed97b1fd2ab4b7e94ad7b77d4daa30a",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://github-experts.azure-api.net/Schedule/patniko%2fgithub-experts",
+					"protocol": "https",
+					"host": [
+						"github-experts",
+						"azure-api",
+						"net"
+					],
+					"path": [
+						"Schedule",
+						"patniko%2fgithub-experts"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
