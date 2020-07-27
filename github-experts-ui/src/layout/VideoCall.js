@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Loading from 'layout/Loading';
 
-function sessionDone(roomName) {
+function sessionDone(roomName, durationInMinutes) {
   fetch(`${process.env.REACT_APP_API_ROOT}/calldone`, {
     method: 'POST',
     headers: {
@@ -11,6 +11,7 @@ function sessionDone(roomName) {
     },
     body: JSON.stringify({
       roomName,
+      durationInMinutes,
     }),
   })
     .then((response) => {
@@ -34,6 +35,7 @@ export default function Jitsi() {
 
   useEffect(() => {
     let jitsi;
+    let startTime;
     const script = document.createElement('script');
     script.src = 'https://meet.jit.si/external_api.js';
     script.async = true;
@@ -44,9 +46,12 @@ export default function Jitsi() {
         height: '99.5%',
         parentNode: jitsiNode.current,
       });
-      jitsi.getIFrame().onload = () => setLoading(false);
+      jitsi.getIFrame().onload = () => {
+        setLoading(false);
+        startTime = new Date();
+      };
       jitsi.addEventListener('readyToClose', () => {
-        sessionDone(roomName);
+        sessionDone(roomName, (new Date() - startTime) / 60000);
         window.location = document.referrer || window.location.origin;
       });
     };
