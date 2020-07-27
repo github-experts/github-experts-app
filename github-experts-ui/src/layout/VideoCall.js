@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Loading from 'layout/Loading';
 
@@ -29,13 +29,13 @@ function sessionDone(roomName, durationInMinutes) {
 }
 
 export default function Jitsi() {
-  const jitsiNode = useRef();
   const [loading, setLoading] = useState(true);
   const { roomName } = useParams();
 
   useEffect(() => {
     let jitsi;
     let startTime;
+    const reactRoot = document.getElementById('root');
     const script = document.createElement('script');
     script.src = 'https://meet.jit.si/external_api.js';
     script.async = true;
@@ -44,7 +44,7 @@ export default function Jitsi() {
         roomName,
         width: '100%',
         height: '99.5%',
-        parentNode: jitsiNode.current,
+        parentNode: reactRoot,
       });
       jitsi.getIFrame().onload = () => {
         setLoading(false);
@@ -55,12 +55,12 @@ export default function Jitsi() {
         window.location = document.referrer || window.location.origin;
       });
     };
-    document.body.appendChild(script);
+    reactRoot.appendChild(script);
     return () => {
       if (jitsi) {
         jitsi.dispose();
       }
-      document.body.removeChild(script);
+      reactRoot.removeChild(script);
     };
   }, [roomName, setLoading]);
 
@@ -68,5 +68,5 @@ export default function Jitsi() {
     return <Loading />;
   }
 
-  return <div ref={jitsiNode} />;
+  return null;
 }
