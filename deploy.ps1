@@ -71,6 +71,8 @@ if (!(Test-Path ./node_modules -PathType Container))
 }
 
 $env:REACT_APP_API_ROOT = "https://$backendHostName/api"
+$env:REACT_APP_B2C_TENANT_NAME = $b2cTenantName;
+$env:REACT_APP_B2C_CLIENT_ID = $b2cClientId;
 npm run build
 
 az storage blob upload-batch `
