@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import Loading from 'layout/Loading';
 
 function sessionDone(roomName, durationInMinutes) {
+  var status = "completed";
   fetch(`${process.env.REACT_APP_API_ROOT}/calldone/${roomName}`, {
     method: 'PATCH',
     headers: {
@@ -10,6 +11,7 @@ function sessionDone(roomName, durationInMinutes) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
+      status,
       durationInMinutes,
     }),
   })
