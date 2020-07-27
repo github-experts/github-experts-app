@@ -1,0 +1,208 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "appName": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 19,
+      "metadata": {
+        "description": "Name for the deployment"
+      }
+    },
+    "b2cClientId": {
+      "type": "string",
+      "minLength": 36,
+      "maxLength": 36,
+      "metadata": {
+        "description": "Name of the client application used for B2C authentication"
+      }
+    },
+    "b2cTenantName": {
+      "type": "string",
+      "minLength": 1,
+      "metadata": {
+        "description": "Name of the tenant used for B2C authentication"
+      }
+    },
+    // SKU parameters
+    "storageAccountSku": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_RAGRS"
+      ]
+    }
+  },
+  "variables": {
+    "frontendName": "[concat(parameters('appName'), 'ui')]",
+    "backendName": "[concat(parameters('appName'), 'api')]",
+    "location": "[resourceGroup().location]"
+  },
+  "resources": [
+    /* #region Frontend */
+    // Static website storage account to hold Frontend client-side app
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('frontendName')]",
+      "apiVersion": "2019-06-01",
+      "location": "[variables('location')]",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "[parameters('storageAccountSku')]"
+      }
+    },
+    /* #endregion */
+    /* #region Backend */
+    // Backing storage account for Backend Azure Function
+    {
+      "type": "Microsoft.Storage/storageAccounts",
+      "name": "[variables('backendName')]",
+      "apiVersion": "2019-06-01",
+      "location": "[variables('location')]",
+      "kind": "StorageV2",
+      "sku": {
+        "name": "[parameters('storageAccountSku')]"
+      }
+    },
+    // Hosting plan for Backend Azure Function
+    {
+      "type": "Microsoft.Web/serverfarms",
+      "apiVersion": "2018-02-01",
+      "name": "[variables('backendName')]",
+      "location": "[variables('location')]",
+      "sku": {
+        "name": "Y1",
+        "tier": "Dynamic"
+      },
+      "properties": {
+        "name": "[variables('backendName')]",
+        "computeMode": "Dynamic"
+      }
+    },
+    // Monitoring for Backend Azure Function
+    {
+      "apiVersion": "2015-05-01",
+      "name": "[variables('backendName')]",
+      "type": "Microsoft.Insights/components",
+      "location": "[variables('location')]",
+      "kind": "web",
+      "tags": {
+        "[concat('hidden-link:', resourceId('Microsoft.Web/sites', variables('backendName')))]": "Resource"
+      },
+      "properties": {
+        "Application_Type": "web"
+      }
+    },
+    // Backend Azure Function
+    {
+      "apiVersion": "2018-11-01",
+      "type": "Microsoft.Web/sites",
+      "name": "[variables('backendName')]",
+      "location": "[variables('location')]",
+      "kind": "functionapp",
+      "dependsOn": [
+        "[resourceId('Microsoft.Web/serverfarms', variables('backendName'))]",
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('backendName'))]"
+      ],
+      "identity": {
+        "type": "SystemAssigned"
+      },
+      "properties": {
+        "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('backendName'))]",
+        "siteConfig": {
+          "appSettings": [
+            // Backend runtime settings
+            {
+              "name": "AzureWebJobsStorage",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('backendName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('backendName')), '2019-06-01').keys[0].value)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
+              "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('backendName'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('backendName')), '2019-06-01').keys[0].value)]"
+            },
+            {
+              "name": "WEBSITE_CONTENTSHARE",
+              "value": "[toLower(variables('backendName'))]"
+            },
+            {
+              "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
+              "value": "[reference(concat('Microsoft.Insights/components/', variables('backendName'))).InstrumentationKey]"
+            },
+            {
+              "name": "FUNCTIONS_EXTENSION_VERSION",
+              "value": "~3"
+            },
+            {
+              "name": "FUNCTIONS_WORKER_RUNTIME",
+              "value": "dotnet"
+            },
+            {
+              "name": "SCM_DO_BUILD_DURING_DEPLOYMENT",
+              "value": "false"
+            }
+          ]
+        }
+      },
+      "resources": [
+        // Enable CORS from Frontend to Backend
+        {
+          "apiVersion": "2018-11-01",
+          "type": "Microsoft.Web/sites/config",
+          "name": "[concat(variables('backendName'), '/web')]",
+          "location": "[variables('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('backendName'))]"
+          ],
+          "properties": {
+            "cors": {
+              "allowedOrigins": [
+                "[replace(replace(reference(concat('Microsoft.Storage/storageAccounts/', variables('frontendName'))).primaryEndpoints.web, 'https://', ''), '/', '')]"
+              ],
+              "supportCredentials": true
+            }
+          }
+        },
+        // Lock-down Backend with AAD B2C EasyAuth
+        {
+          "apiVersion": "2018-11-01",
+          "type": "Microsoft.Web/sites/config",
+          "name": "[concat(variables('backendName'), '/authsettings')]",
+          "location": "[variables('location')]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Web/sites', variables('backendName'))]"
+          ],
+          "properties": {
+            "enabled": true,
+            "unauthenticatedClientAction": "RedirectToLoginPage",
+            "tokenStoreEnabled": true,
+            "defaultProvider": "AzureActiveDirectory",
+            "clientId": "[parameters('b2cClientId')]",
+            "issuer": "[concat('https://', parameters('b2cTenantName'), '.b2clogin.com/', parameters('b2cTenantName'), '.onmicrosoft.com/v2.0/.well-known/openid-configuration?p=B2C_1_github')]"
+          }
+        }
+      ]
+    }
+    /* #endregion */
+  ],
+  "outputs": {
+    "frontendStorageAccountResourceId": {
+      "type": "string",
+      "value": "[concat(resourceGroup().id, '/providers/Microsoft.Storage/storageAccounts/', variables('frontendName'))]"
+    },
+    "frontendHostname": {
+      "type": "string",
+      "value": "[replace(replace(reference(concat('Microsoft.Storage/storageAccounts/', variables('frontendName'))).primaryEndpoints.web, 'https://', ''), '/', '')]"
+    },
+    "backendFunctionAppName": {
+      "type": "string",
+      "value": "[variables('backendName')]"
+    },
+    "backendHostName": {
+      "type": "string",
+      "value": "[reference(concat('Microsoft.Web/sites/', variables('backendName'))).defaultHostName]"
+    }
+  }
+}
