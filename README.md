@@ -15,3 +15,7 @@ $resourceGroup = az group create --name github-experts --location SouthCentralUS
 $servicePrincipal = az ad sp create-for-rbac --name github-experts --skip-assignment --output json | ConvertFrom-Json
 az role assignment create --scope $resourceGroup.id --role Contributor --assignee $servicePrincipal.appId | Out-Null
 ```
+
+### Postman Collection
+
+A Postman collection can be imported via `Hackathon.postman_collection.json` file.
