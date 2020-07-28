@@ -8,7 +8,7 @@ namespace GithubExpertsService
     using System.Text.Json;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Extensions.Logging;
-    using SendGrid.Helpers.Mail;
+    // using SendGrid.Helpers.Mail;
 
     public static class SendEmailFunction
     {
@@ -20,9 +20,10 @@ namespace GithubExpertsService
         };
 
         [FunctionName("SendEmailFunction")]
-        public static void Run(
+        [return: ServiceBus("tosend", Connection = "SERVICE_BUS_CONNECTION_STRING")]
+        public static string Run(
             [ServiceBusTrigger("email", Connection = "SERVICE_BUS_CONNECTION_STRING")]string queueItem,
-            [SendGrid(ApiKey = "SENDGRID_KEY")] out SendGridMessage message,
+            // [SendGrid(ApiKey = "SENDGRID_KEY")] out SendGridMessage message,
             ILogger log)
         {
             log.LogInformation("Processing message {message}", queueItem);
@@ -41,11 +42,17 @@ namespace GithubExpertsService
                 emailContent = emailContent.Replace($"[{placeholder.Key}]", placeholder.Value);
             }
 
-            message = new SendGridMessage();
-            message.AddTo(emailMessage.To);
-            message.SetFrom(new EmailAddress("github-experts@microsoft.com"));
-            message.SetSubject(Subjects[emailMessage.Template]);
-            message.AddContent("text/html", emailContent.ToString());
+            // message = new SendGridMessage();
+            // message.AddTo(emailMessage.To);
+            // message.SetFrom(new EmailAddress("github-experts@microsoft.com"));
+            // message.SetSubject(Subjects[emailMessage.Template]);
+            // message.AddContent("text/html", emailContent.ToString());
+            return JsonSerializer.Serialize(new EmailToSend
+            {
+                Subject = Subjects[emailMessage.Template],
+                To = emailMessage.To,
+                Body = emailContent.ToString(),
+            });
         }
     }
 }
