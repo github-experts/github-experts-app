@@ -2,7 +2,8 @@ namespace GithubExpertsService.Api
 {
     using System;
     using Microsoft.Azure.Cosmos.Table;
-internal static class Common
+    
+    internal static class Common
     {
         /// <summary>
         /// Returns an initialized CosmosTableClient.
@@ -16,3 +17,4 @@ internal static class Common
                     "jFtzLcKfZclFCHLnA3ZhguupQKKwNUsIw6KE2nUMebefb8J6ddvnTrtn5Ffd7niuY73eTmX6f5zpGqjyhKctiA=="));
         });
     }
+}

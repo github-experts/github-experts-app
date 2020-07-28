@@ -111,40 +111,6 @@ namespace GithubExpertsService
         public string Bitmap { get; set; }
     }
 
-    public class Appointment
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; }
-
-        [JsonPropertyName("date")]
-        public string Date { get; set; }
-
-        [JsonPropertyName("time")]
-        public string Time { get; set; }
-
-        [JsonPropertyName("requestor")]
-        public string Requestor { get; set; }
-
-        // Status is requested, accepted, rejected, or completed 
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
-
-        [JsonPropertyName("details")]
-        public string Details { get; set; }
-
-        [JsonPropertyName("rate")]
-        public double Rate { get; set; }
-
-        [JsonPropertyName("requestfree")]
-        public bool RequestFree { get; set; }
-
-        [JsonPropertyName("expert")]
-        public string Expert { get; set; }
-
-        [JsonPropertyName("repo")]
-        public string Repo { get; set; }
-    }
-
     public class RequestError {
         [JsonPropertyName("message")]
         public string Message { get; set; }

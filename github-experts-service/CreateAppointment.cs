@@ -6,7 +6,9 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Cosmos.Table;
 using Newtonsoft.Json;
+using GithubExpertsService.Model;
 
 namespace GithubExpertsService.Api
 {
@@ -19,35 +21,45 @@ namespace GithubExpertsService.Api
         {
             log.LogInformation("Create Appointment request.");
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-
-            try 
+            AppointmentEntity appointment = null;
+            try
             {
-                var appointment = new Appointment() {
-                    Date = data.date,
-                    Time = data.time,
-                    Requestor = data.requestor,
-                    Status = data.status,
-                    Rate = data.rate,
-                    RequestFree = data.requestfree,
-                    Expert = data.expert,
-                    Repo = data.repo
-                };
-            } catch (Exception ex)
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                appointment = JsonConvert.DeserializeObject<AppointmentEntity>(requestBody);
+
+            }
+            catch (Exception ex)
             {
                 var err = new RequestError() {
                     Message = ex.Message
-                }; 
+                };
 
-                log.LogError(string.Format("CreateAppointment(): Error parsing payload. {1}", ex.InnerException));
+                log.LogError(string.Format("CreateAppointment(): payload parsing {0}:{1}", ex.Message, ex.InnerException));
 
                 return new BadRequestObjectResult(err);
             }
 
-            await documentOut.AddAsync(data);
+            try
+            {
+                // Retrieve storage account information from connection string.
+                var storageAccount = Common.CosmosTableClient;
+                var table = Common.CosmosTableClient.Value.GetTableReference("schedule");
 
-            return new OkResult();
+                TableOperation insert = TableOperation.InsertOrMerge(appointment);
+                TableResult result = await table.ExecuteAsync(insert);
+                var insertedAppointment = result.Result as AppointmentEntity;
+
+                return new OkObjectResult(insertedAppointment);
+
+            } catch (StorageException e)
+            {
+                var err = new RequestError() {
+                    Message = e.Message
+                };
+
+                log.LogError(string.Format("CreateAppointment(): Storage exception occurred {0}:{1}", e.Message, e.InnerException));
+                return new BadRequestObjectResult(err);
+            }
         }
     }
 }
