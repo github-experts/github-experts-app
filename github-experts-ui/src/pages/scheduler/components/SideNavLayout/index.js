@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Demo } from '../Scheduler';
+import { MyScheduler } from '../Scheduler';
 
 const CSSCircle = styled.p`
   height: 12px;
@@ -28,7 +28,7 @@ export const SideNavLayout = styled(({ className, repoInfo }) => {
         </div>
       </div>
       <div className="right-pane flex-1">
-        <Demo />
+        <MyScheduler />
       </div>
     </div>
   );

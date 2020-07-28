@@ -45,7 +45,7 @@ const CustomComponent = styled(({ className }) => {
   }
 `;
 
-export const Demo = () => {
+export const MyScheduler = () => {
   const [currentDate, setCurrentDate] = React.useState('2018-10-31');
 
   return (
