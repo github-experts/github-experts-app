@@ -9,14 +9,7 @@ $b2cTenantName = $env:B2C_TENANT_NAME
 $resourceGroup = $env:APP_GROUP
 $appName = $env:APP_NAME
 $sendgridAPIKey = $env:SENDGRID_API_KEY
-
-#Secure password geenration for SendGrid
-add-type -AssemblyName System.Web
-$minLength = 10 ## characters
-$maxLength = 20 ## characters
-$length = Get-Random -Minimum $minLength -Maximum $maxLength
-$nonAlphaChars = 5
-$sendGridPassword = [System.Web.Security.Membership]::GeneratePassword($length, $nonAlphaChars)
+$sendGridPassword = $end:SENDGRID_PASSWORD
 
 #region Resources
 
