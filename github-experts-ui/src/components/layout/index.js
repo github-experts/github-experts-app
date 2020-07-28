@@ -11,10 +11,12 @@ export const Layout = styled(({ className, headerOptions, children }) => {
   );
 })`
   height: 100%;
+
   .box-panel-container {
-    height: 100%;
+    height: calc(100% - 64px);
     display: flex;
     justify-content: center;
     align-items: center;
+    background: rgb(249, 249, 249);
   }
 `;
