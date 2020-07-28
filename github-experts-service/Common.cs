@@ -1,8 +1,11 @@
-namespace GithubExpertsService.Api
+namespace GithubExperts.Api
 {
     using System;
     using Microsoft.Azure.Cosmos.Table;
-    
+
+    /// <summary>
+    /// 
+    /// </summary>
     internal static class Common
     {
         /// <summary>
@@ -10,6 +13,7 @@ namespace GithubExpertsService.Api
         /// </summary>
         public static readonly Lazy<CloudTableClient> CosmosTableClient = new Lazy<CloudTableClient>(() =>
         {
+            // TODO: move hard coded values to env variables
             return new CloudTableClient(
                 new Uri("https://github-experts-cosmos.table.cosmos.azure.com:443/"),
                 new StorageCredentials(

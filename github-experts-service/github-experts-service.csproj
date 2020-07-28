@@ -2,8 +2,9 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <AzureFunctionsVersion>v3</AzureFunctionsVersion>
-    <RootNamespace>github_tutors_service</RootNamespace>
+    <RootNamespace>GithubExperts.Api</RootNamespace>
     <UserSecretsId>e9cd4492-4dc3-4f78-b036-5d2871c4bf69</UserSecretsId>
+    <AssemblyName>GithubExperts.Api</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <CodeAnalysisRuleSet>.ruleset</CodeAnalysisRuleSet>
@@ -17,8 +18,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="3.0.3"/>
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.15.0-beta2"/>
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="3.0.3" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.15.0-beta2" />
     <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="2.0.0-preview" />
   </ItemGroup>
   <ItemGroup>

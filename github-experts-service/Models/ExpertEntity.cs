@@ -1,10 +1,9 @@
-
-namespace GithubExpertsService.Model
+namespace GithubExperts.Api.Models
 {
     using System;
     using System.Text.Json.Serialization;
     using Microsoft.Azure.Cosmos.Table;
-    
+
     public class ExpertEntity : TableEntity
     {
         public ExpertEntity(string handle, string repo)

@@ -1,4 +1,4 @@
-namespace GithubExpertsService.Model
+namespace GithubExperts.Api.Models
 {
     using System;
     using System.Text.Json.Serialization;
