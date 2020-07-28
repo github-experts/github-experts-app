@@ -1,4 +1,4 @@
-namespace GithubExpertsService
+namespace GithubExperts.Api
 {
     using System.Collections.Generic;
     using System.Text.Json.Serialization;
