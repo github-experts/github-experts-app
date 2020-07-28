@@ -1,8 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 
-const NoOpLink = styled(Link)`
+const NoOpLink = styled.a`
   pointer-events: none;
 `;
 
@@ -13,9 +12,9 @@ export const BreadCrumbs = styled(({ className, breadCrumbPaths }) => {
       aria-label="Breadcrumb"
     >
       <ol>
-        {breadCrumbPaths.slice(0, -1).map((item) => {
+        {breadCrumbPaths.slice(0, -1).map((item, i) => {
           return (
-            <li className="breadcrumb-item text-medium">
+            <li key={i} className="breadcrumb-item text-medium">
               <NoOpLink>{item}</NoOpLink>
             </li>
           );
