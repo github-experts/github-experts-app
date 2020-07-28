@@ -5,6 +5,7 @@ namespace GithubExperts.Api.Functions
     using System.Threading.Tasks;
     using System.Web.Http;
     using GithubExperts.Api.Models;
+    using GithubExperts.Api.Util;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.Cosmos.Table;
@@ -13,7 +14,7 @@ namespace GithubExperts.Api.Functions
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
 
-    public static class CreateAppointment
+    public static class CreateAppointmentFunction
     {
         [FunctionName("CreateAppointment")]
         public static async Task<IActionResult> Run(
@@ -28,8 +29,8 @@ namespace GithubExperts.Api.Functions
                 string requestBody = reader.ReadToEnd();
                 AppointmentEntity appointmentEntity = JsonConvert.DeserializeObject<AppointmentEntity>(requestBody);
 
-                var table = Common.CosmosTableClient.Value.GetTableReference("schedule"); // TODO: abstract this so that it's not a bare string
-                var result = await table.ExecuteAsync(TableOperation.InsertOrMerge(appointmentEntity));
+                var table = CosmosTableUtil.GetTableReference("schedule"); // TODO: abstract this so that it's not a bare string
+                var result = await table.ExecuteAsync(TableOperation.InsertOrMerge(appointmentEntity)); // TODO collisons should be rare given that the id is auto-genned, should we just go with Insert?
                 return new OkObjectResult(result.Result as AppointmentEntity);
             }
             catch (JsonSerializationException ex)
