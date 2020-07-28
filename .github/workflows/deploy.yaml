@@ -30,3 +30,4 @@ jobs:
           APP_NAME: 'githubexperts'
           B2C_CLIENT_ID: '144e9bd1-f04e-4454-abc6-1dae3af35cc4'
           B2C_TENANT_NAME: 'h3dev'
+          SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
