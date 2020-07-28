@@ -6,31 +6,32 @@ namespace GithubExperts.Api.Models
 
     public class ExpertEntity : TableEntity
     {
-        public ExpertEntity(string handle, string repo)
-        {
-            RowKey = handle;
-            PartitionKey = repo;
 
-            Handle = handle;
-            Repo = repo;
-        }
+        [JsonPropertyName("organization")]
+        public string RowKey { get; set; }
+
+        [JsonPropertyName("repo")]
+        public string PartitionKey { get; set; }
 
         [JsonPropertyName("handle")]
         public string Handle { get; set; }
 
-        [JsonPropertyName("repo")]
-        public string Repo { get; set; }
-
-        [JsonPropertyName("tz")]
-        public string Tz { get; set; }
+        [JsonPropertyName("timezone")]
+        public string TimeZone { get; set; }
 
         [JsonPropertyName("starttime")]
-        public string StartTime { get; set; }
+        public DateTime StartTime { get; set; }
+
+        [JsonPropertyName("endtime")]
+        public DateTime EndTime { get; set; }
 
         [JsonPropertyName("rate")]
         public double Rate { get; set; }
 
         [JsonPropertyName("opentodonate")]
         public bool OpenToDonate { get; set; }
+
+        [JsonPropertyName("excludeweekends")]
+        public bool ExcludeWeekends { get; set; }
     }
 }

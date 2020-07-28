@@ -10,18 +10,15 @@ namespace GithubExperts.Api.Models
 
         public AppointmentEntity()
         {
-            RowKey = new Guid().ToString();
+            RowKey = Guid.NewGuid().ToString();
             Id = RowKey;
         }
 
         [JsonPropertyName("id")]
-        public string Id { get; private set; }
+        public string Id { get; set; }
 
-        [JsonPropertyName("date")]
-        public string Date { get; set; }
-
-        [JsonPropertyName("time")]
-        public string Time { get; set; }
+        [JsonPropertyName("datetime")]
+        public DateTime DateTime { get; set; }
 
         [JsonPropertyName("requestor")]
         public string Requestor { get; set; }
