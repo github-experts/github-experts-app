@@ -59,7 +59,7 @@
                 "inputs": {
                     "host": {
                         "connection": {
-                            "name": "@parameters('$connections')['servicebus_1']['connectionId']"
+                            "name": "@parameters('$connections')['servicebus']['connectionId']"
                         }
                     },
                     "method": "get",
@@ -84,9 +84,9 @@
                     "connectionName": "outlook",
                     "id": "/subscriptions/bd4ef697-2bb3-490e-b480-21bed150e2ba/providers/Microsoft.Web/locations/southcentralus/managedApis/outlook"
                 },
-                "servicebus_1": {
-                    "connectionId": "/subscriptions/bd4ef697-2bb3-490e-b480-21bed150e2ba/resourceGroups/github-experts/providers/Microsoft.Web/connections/servicebus-1",
-                    "connectionName": "servicebus-1",
+                "servicebus": {
+                    "connectionId": "/subscriptions/bd4ef697-2bb3-490e-b480-21bed150e2ba/resourceGroups/github-experts/providers/Microsoft.Web/connections/servicebus",
+                    "connectionName": "servicebus",
                     "id": "/subscriptions/bd4ef697-2bb3-490e-b480-21bed150e2ba/providers/Microsoft.Web/locations/southcentralus/managedApis/servicebus"
                 }
             }

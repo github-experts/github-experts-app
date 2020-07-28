@@ -35,19 +35,12 @@
         "Standard_RAGRS"
       ]
     },
-    "serviceBusName": {
-      "defaultValue": "githubExpertsServiceBus",
-      "type": "String",
+    "sendgridPassword": {
+      "type": "string",
       "metadata": {
-        "description": "Name of the ServiceBus used to send emails"
+        "description": "Password for the SendGrid service"
       }
     },
-    // "sendgridPassword": {
-    //   "type": "string",
-    //   "metadata": {
-    //     "description": "Password for the SendGrid service"
-    //   }
-    // },
     "sendgridApiKey": {
       "type": "string",
       "metadata": {
@@ -58,9 +51,10 @@
   "variables": {
     "frontendName": "[concat(parameters('appName'), 'ui')]",
     "backendName": "[concat(parameters('appName'), 'api')]",
+    "serviceBusName": "[concat(parameters('appName'), 'sb')]",
     "location": "[resourceGroup().location]",
     "defaultSASKeyName": "RootManageSharedAccessKey",
-    "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', parameters('serviceBusName'), variables('defaultSASKeyName'))]",
+    "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusName'), variables('defaultSASKeyName'))]",
 	  "sbVersion": "2017-04-01"//,
     //"sendgridName": "[concat(parameters('appName'), 'sendGrid')]"
   },
@@ -123,7 +117,7 @@
     {
       "type": "Microsoft.ServiceBus/namespaces",
       "apiVersion": "2017-04-01",
-      "name": "[parameters('serviceBusName')]",
+      "name": "[variables('serviceBusName')]",
       "location": "[variables('location')]",
       "sku": {
           "name": "Basic",
@@ -136,10 +130,10 @@
     {
       "type": "Microsoft.ServiceBus/namespaces/AuthorizationRules",
       "apiVersion": "2017-04-01",
-      "name": "[concat(parameters('serviceBusName'), '/RootManageSharedAccessKey')]",
+      "name": "[concat(variables('serviceBusName'), '/RootManageSharedAccessKey')]",
       "location": "[variables('location')]",
       "dependsOn": [
-          "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusName'))]"
+          "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName'))]"
       ],
       "properties": {
           "rights": [
@@ -152,10 +146,10 @@
     {
       "type": "Microsoft.ServiceBus/namespaces/queues",
       "apiVersion": "2017-04-01",
-      "name": "[concat(parameters('serviceBusName'), '/email')]",
+      "name": "[concat(variables('serviceBusName'), '/email')]",
       "location": "[variables('location')]",
       "dependsOn": [
-          "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusName'))]"
+          "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName'))]"
       ],
       "properties": {
           "lockDuration": "PT30S",
@@ -175,10 +169,10 @@
     {
       "type": "Microsoft.ServiceBus/namespaces/queues",
       "apiVersion": "2017-04-01",
-      "name": "[concat(parameters('serviceBusName'), '/tosend')]",
+      "name": "[concat(variables('serviceBusName'), '/tosend')]",
       "location": "[variables('location')]",
       "dependsOn": [
-          "[resourceId('Microsoft.ServiceBus/namespaces', parameters('serviceBusName'))]"
+          "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName'))]"
       ],
       "properties": {
           "lockDuration": "PT30S",
