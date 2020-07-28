@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { MyScheduler } from '../Scheduler';
 
-const CSSCircle = styled.p`
+export const CSSCircle = styled.p`
   height: 12px;
   width: 12px;
   background-color: ${(props) => props.color};
