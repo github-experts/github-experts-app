@@ -52,11 +52,11 @@ export const RequestForm = styled(({ className }) => {
             <textarea className="form-control" id="textarea"></textarea>
             <div className="radio-checkboxes d-flex flex-column pt-2">
               <label className="d-flex flex-items-center">
-                <input type="radio" id="herp" name="herpderp" />
+                <input type="radio" />
                 <span>I will pay $50 for this 30-minute session</span>
               </label>
               <label className="d-flex  flex-items-center">
-                <input type="radio" id="derp" name="herpderp" />
+                <input type="radio" />
                 <span>I hope to request a free session</span>
               </label>
             </div>
