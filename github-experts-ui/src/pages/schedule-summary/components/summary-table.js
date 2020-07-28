@@ -1,7 +1,10 @@
-import React from 'react';
-import { useTable, useSortBy } from 'react-table';
+import { AcceptanceButtons, RepoCell } from './components.misc';
+import React, { useEffect } from 'react';
+import { useSortBy, useTable } from 'react-table';
 import { Styles } from './summary-table.style';
-import { RepoCell, AcceptanceButtons } from './components.misc';
+import { storeSchedule } from 'stores/schedulerStore';
+import { useDispatch, useSelector } from 'react-redux';
+import { getSchedule } from '../../../stores/schedulerStore';
 
 function Table({ columns, data }) {
   const {
@@ -51,6 +54,37 @@ function Table({ columns, data }) {
 }
 
 export function SummaryTable() {
+  const dispatch = useDispatch();
+  const scheduler = useSelector(getSchedule);
+
+  useEffect(() => {
+    dispatch(
+      storeSchedule([
+        {
+          reqNumber: '#271',
+          time: '7/12 1:00PM',
+          profile: '@Gafdu',
+          repo: ['patniko', 'tutorDemo'],
+          payment: '$50 USD',
+          description:
+            'Convalis luctus eleifend ut id amet sociis. Libero feugiat',
+          repoCircleColor: 'orange',
+        },
+        {
+          reqNumber: '#272',
+          time: '7/12 1:00PM',
+          profile: '@Gafdu',
+          repo: ['patniko', 'tutorDemo'],
+          payment: '$50US',
+          isFree: true,
+          description:
+            'Convalis luctus eleifend ut id amet sociis. Libero feugiat',
+          repoCircleColor: 'red',
+        },
+      ])
+    );
+  }, [dispatch]);
+
   const columns = React.useMemo(
     () => [
       {
@@ -82,7 +116,7 @@ export function SummaryTable() {
         accessor: 'payment',
         Cell: (props) =>
           props.row.original.isFree ? (
-            <span class="Label mr-1 Label--pink" title="Label: Free">
+            <span className="Label mr-1 Label--pink" title="Label: Free">
               Free
             </span>
           ) : (
@@ -101,36 +135,9 @@ export function SummaryTable() {
     []
   );
 
-  const data = React.useMemo(
-    () => [
-      {
-        reqNumber: '#271',
-        time: '7/12 1:00PM',
-        profile: '@Gafdu',
-        repo: ['patniko', 'tutorDemo'],
-        payment: '$50 USD',
-        description:
-          'Convalis luctus eleifend ut id amet sociis. Libero feugiat',
-        repoCircleColor: 'orange',
-      },
-      {
-        reqNumber: '#272',
-        time: '7/12 1:00PM',
-        profile: '@Gafdu',
-        repo: ['patniko', 'tutorDemo'],
-        payment: '$50US',
-        isFree: true,
-        description:
-          'Convalis luctus eleifend ut id amet sociis. Libero feugiat',
-        repoCircleColor: 'red',
-      },
-    ],
-    []
-  );
-
   return (
     <Styles>
-      <Table columns={columns} data={data} />
+      <Table columns={columns} data={scheduler || []} />
     </Styles>
   );
 }

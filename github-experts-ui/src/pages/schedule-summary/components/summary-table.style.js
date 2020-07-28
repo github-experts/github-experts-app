@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 
 export const Styles = styled.div`
+  overflow: auto;
   table {
     width: 100%;
     border-spacing: 0;
