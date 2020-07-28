@@ -4,6 +4,7 @@ namespace GithubExperts.Api.Functions
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using GithubExperts.Api.DataAccess;
     using GithubExperts.Api.Models;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
@@ -21,8 +22,7 @@ namespace GithubExperts.Api.Functions
         {
             log.LogInformation("Experts(): Received request");
 
-            var expertData = new DataAccess.ExpertData();
-            var result = await expertData.GetExpertsAsync(repo);
+            var result = await ExpertData.GetExpertsAsync(repo);
 
             return new OkObjectResult(result);
         }

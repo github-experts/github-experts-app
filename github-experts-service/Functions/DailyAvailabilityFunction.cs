@@ -4,13 +4,14 @@ namespace GithubExperts.Api.Functions
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using GithubExperts.Api.DataAccess;
     using GithubExperts.Api.Models;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
-    using Microsoft.Extensions.Primitives;
     using Microsoft.Extensions.Logging;
+    using Microsoft.Extensions.Primitives;
 
     public static class DailyAvailability
     {
@@ -22,37 +23,33 @@ namespace GithubExperts.Api.Functions
             ILogger log)
         {
             DateTime startDate, endDate;
-            StringValues startbuf, endbuf;
+            StringValues startBuffer, endBuffer;
 
             log.LogInformation("DailyAvailability(): Received request");
 
-            if (req.Query.TryGetValue("startdate", out startbuf) && req.Query.TryGetValue("enddate", out endbuf)) 
+            if (req.Query.TryGetValue("startdate", out startBuffer) && req.Query.TryGetValue("enddate", out endBuffer))
             {
-                if (!DateTime.TryParse(startbuf, out startDate) || !DateTime.TryParse(endbuf, out endDate)) 
+                if (!DateTime.TryParse(startBuffer, out startDate) || !DateTime.TryParse(endBuffer, out endDate))
                 {
                     log.LogError("DailyAvailability(): Badly formed dates in query string");
                     return new BadRequestResult();
                 }
-            } else {
-                //Dates were not provided, use default of next 7 days
+            }
+            else
+            {
+                // Dates were not provided, use default of next 7 days
                 startDate = DateTime.Today;
                 endDate = DateTime.Today.AddDays(7);
             }
 
-            var appointmentData = new DataAccess.AppointmentData();
-            var result = await appointmentData.GetAppointmentsAsync(repo, handle, startDate, endDate);
+            var result = await AppointmentData.GetAppointmentsAsync(repo, handle, startDate, endDate);
 
-            // TODO: Get Expert based on handle in route
-            ExpertEntity expert = new ExpertEntity() {
-                PartitionKey = "patniko",
-                RowKey = "githubexperts",
-                StartTime = new DateTime(2020, 1, 1, 9, 0, 0),
-                EndTime = new DateTime(2020, 1, 1, 17, 0, 0),
-                OpenToDonate = true,
-                ExcludeWeekends = true,
-                Handle = "patniko",
-                TimeZone = "PST"
-            };
+            var expert = await ExpertData.GetExpertAsync(handle);
+
+            if (expert == null)
+            {
+                return new NotFoundResult();
+            }
 
             var availableTimeslots = new List<AvailabilityEntity>();
 
@@ -68,20 +65,20 @@ namespace GithubExperts.Api.Functions
                         continue;
                     }
 
-                    //Build slots for this day and mark as available or filled
+                    // Build slots for this day and mark as available or filled
                     var timeSlotLoop = expert.StartTime.TimeOfDay;
                     while (timeSlotLoop <= expert.EndTime.TimeOfDay)
                     {
                         var starttime = new DateTime(dayLoop.Year, dayLoop.Month, dayLoop.Day, timeSlotLoop.Hours, timeSlotLoop.Minutes, timeSlotLoop.Seconds);
                         var appointment = result.Where(x => x.DateTime.Date == dayLoop.Date && x.DateTime.TimeOfDay == timeSlotLoop).FirstOrDefault();
-                        
-                        var availability = new AvailabilityEntity()
+
+                        var availability = new AvailabilityEntity
                         {
                             StartDate = starttime,
-                            EndDate = starttime.AddMinutes(30)
+                            EndDate = starttime.AddMinutes(30),
                         };
 
-                        availability.Available = (appointment == null);
+                        availability.Available = appointment == null;
 
                         availableTimeslots.Add(availability);
 

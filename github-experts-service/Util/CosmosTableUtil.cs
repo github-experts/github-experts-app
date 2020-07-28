@@ -4,7 +4,7 @@ namespace GithubExperts.Api.Util
     using Microsoft.Azure.Cosmos.Table;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     internal static class CosmosTableUtil
     {

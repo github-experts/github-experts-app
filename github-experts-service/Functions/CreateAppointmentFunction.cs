@@ -29,8 +29,8 @@ namespace GithubExperts.Api.Functions
                 string requestBody = reader.ReadToEnd();
                 AppointmentEntity appointmentEntity = JsonConvert.DeserializeObject<AppointmentEntity>(requestBody);
 
-                var table = CosmosTableUtil.GetTableReference("schedule"); // TODO: abstract this so that it's not a bare string
-                var result = await table.ExecuteAsync(TableOperation.InsertOrMerge(appointmentEntity)); // TODO collisons should be rare given that the id is auto-genned, should we just go with Insert?
+                var table = CosmosTableUtil.GetTableReference("schedule");
+                var result = await table.ExecuteAsync(TableOperation.InsertOrMerge(appointmentEntity)); // TODO collisions should be rare given that the id is auto-genned, should we just go with Insert?
                 return new OkObjectResult(result.Result as AppointmentEntity);
             }
             catch (JsonSerializationException ex)

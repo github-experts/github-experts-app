@@ -1,27 +1,36 @@
 namespace GithubExperts.Api.DataAccess
 {
-    using System;
     using System.Collections.Generic;
+    using System.Linq;
     using System.Threading.Tasks;
     using GithubExperts.Api.Models;
+    using GithubExperts.Api.Util;
     using Microsoft.Azure.Cosmos.Table;
 
-    public class ExpertData
+    public static class ExpertData
     {
-
-        public async Task<List<ExpertEntity>> GetExpertsAsync(string repo) 
+        public static async Task<List<ExpertEntity>> GetExpertsAsync(string repo)
         {
             TableQuery<ExpertEntity> query = new TableQuery<ExpertEntity>()
-                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, repo));
+                .Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, repo));
 
             return await GetExpertsAsync(query);
         }
 
-        protected async Task<List<ExpertEntity>> GetExpertsAsync(TableQuery<ExpertEntity> query) 
+        public static async Task<ExpertEntity> GetExpertAsync(string handle)
         {
-            //Read in schedule for this repo and handle for these dates
-            var table = Common.CosmosTableClient.Value.GetTableReference("experts"); // TODO: abstract this so that it's not a bare string
-                
+            TableQuery<ExpertEntity> query = new TableQuery<ExpertEntity>()
+                .Where(TableQuery.GenerateFilterCondition("PartionKey", QueryComparisons.Equal, handle));
+
+            var results = await GetExpertsAsync(query);
+            return results.FirstOrDefault();
+        }
+
+        private static async Task<List<ExpertEntity>> GetExpertsAsync(TableQuery<ExpertEntity> query)
+        {
+            // Read in schedule for this repo and handle for these dates
+            var table = CosmosTableUtil.GetTableReference("experts");
+
             var continuationToken = default(TableContinuationToken);
             var result = new List<ExpertEntity>();
             do

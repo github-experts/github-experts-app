@@ -43,7 +43,7 @@ namespace GithubExperts.Api
 
         // bitmap is a string that corresponds to each 30 minute segment
         // for an Expert beginning with their start time. A bitmap corresponding
-        // to an Expert available from 9am to 11am, with a 10:30 appointment 
+        // to an Expert available from 9am to 11am, with a 10:30 appointment
         // booked would look like "AAAB" (9:00 available, 9:30 available,
         // 10:00 available, 10:30 booked)
         [JsonPropertyName("bitmap")]
@@ -66,12 +66,13 @@ namespace GithubExperts.Api
         public string Bitmap { get; set; }
     }
 
-    public class RequestError {
+    public class RequestError
+    {
         [JsonPropertyName("message")]
         public string Message { get; set; }
     }
 
-        public class EmailMessage
+    public class EmailMessage
     {
         [JsonPropertyName("to")]
         public string To { get; set; }

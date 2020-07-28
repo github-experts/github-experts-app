@@ -2,8 +2,8 @@ namespace GithubExperts.Api.Models
 {
     using System;
     using System.Collections.Generic;
-    using System.Text.Json.Serialization;
     using System.Globalization;
+    using System.Text.Json.Serialization;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
 

@@ -6,6 +6,7 @@ namespace GithubExpertsService
     using System.Reflection;
     using System.Text;
     using System.Text.Json;
+    using GithubExperts.Api;
     using Microsoft.Azure.WebJobs;
     using Microsoft.Extensions.Logging;
     // using SendGrid.Helpers.Mail;

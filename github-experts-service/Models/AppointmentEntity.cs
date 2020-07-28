@@ -49,7 +49,7 @@ namespace GithubExperts.Api.Models
 
             set
             {
-                PartitionKey = value.Replace("/","+");
+                PartitionKey = value.Replace("/", "+");
                 repo = value;
             }
         }

@@ -6,12 +6,33 @@ namespace GithubExperts.Api.Models
 
     public class ExpertEntity : TableEntity
     {
-
         [JsonPropertyName("organization")]
-        public string RowKey { get; set; }
+        public string Organization
+        {
+            get
+            {
+                return RowKey;
+            }
+
+            set
+            {
+                RowKey = value;
+            }
+        }
 
         [JsonPropertyName("repo")]
-        public string PartitionKey { get; set; }
+        public string Repository
+        {
+            get
+            {
+                return PartitionKey;
+            }
+
+            set
+            {
+                PartitionKey = value;
+            }
+        }
 
         [JsonPropertyName("handle")]
         public string Handle { get; set; }
