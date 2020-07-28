@@ -32,4 +32,16 @@ namespace GithubExpertsService
         [JsonPropertyName("avatar_url")]
         public string AvatarUrl { get; set; }
     }
+
+    public class EmailMessage
+    {
+        [JsonPropertyName("to")]
+        public string To { get; set; }
+
+        [JsonPropertyName("template")]
+        public string Template { get; set; }
+
+        [JsonPropertyName("placeholders")]
+        public Dictionary<string, string> Placeholders { get; set; } = new Dictionary<string, string>();
+    }
 }
