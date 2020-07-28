@@ -1,14 +1,15 @@
 import React from 'react';
 import styled from 'styled-components';
 import GithubLogo from 'assets/github-logo.svg';
+import ExpertsLogo from 'assets/Experts.svg';
 import { StyledLink } from 'components/StyledLink';
 
-export const Header = styled(({ className, headerOptions, children }) => {
+export const Header = styled(({ className, headerOptions }) => {
   return (
     <header className={`${className} d-flex Header`}>
       <div className="title d-flex">
         <img src={GithubLogo} alt="" />
-        <p className="header-items">Tutors</p>
+        <img className="experts-logo" src={ExpertsLogo} alt="" />
       </div>
       {headerOptions.map((item, i) => (
         <StyledLink key={i} to={item.path}>
@@ -27,10 +28,15 @@ export const Header = styled(({ className, headerOptions, children }) => {
   font-family: Source Sans Pro;
 
   .title {
-    margin-right: 2rem;
+    padding: 0 2rem;
   }
   .nav-items {
     font-family: SF Pro Text;
     font-size: 14px;
+  }
+  .experts-logo {
+    position: relative;
+    top: 2px;
+    left: 2px;
   }
 `;
