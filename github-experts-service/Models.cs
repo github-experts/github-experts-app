@@ -70,4 +70,28 @@ namespace GithubExperts.Api
         [JsonPropertyName("message")]
         public string Message { get; set; }
     }
+
+        public class EmailMessage
+    {
+        [JsonPropertyName("to")]
+        public string To { get; set; }
+
+        [JsonPropertyName("template")]
+        public string Template { get; set; }
+
+        [JsonPropertyName("placeholders")]
+        public Dictionary<string, string> Placeholders { get; set; } = new Dictionary<string, string>();
+    }
+
+    public class EmailToSend
+    {
+        [JsonPropertyName("to")]
+        public string To { get; set; }
+
+        [JsonPropertyName("body")]
+        public string Body { get; set; }
+
+        [JsonPropertyName("subject")]
+        public string Subject { get; set; }
+    }
 }

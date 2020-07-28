@@ -6,6 +6,10 @@
     "start": "func start",
     "test": "echo \"No tests yet...\""
   },
-  "dependencies": {},
+  "dependencies": {
+    "@octokit/rest": "^18.0.3",
+    "jsonwebtoken": "^8.5.1",
+    "request-promise": "^4.2.6"
+  },
   "devDependencies": {}
 }
