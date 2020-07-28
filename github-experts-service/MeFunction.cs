@@ -14,11 +14,11 @@ namespace GithubExpertsService
     using Microsoft.Extensions.Logging;
     using Microsoft.Extensions.Primitives;
 
-    public static class Function1
+    public static class MeFunction
     {
-        [FunctionName("Function1")]
+        [FunctionName("me")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = "me")] HttpRequest req,
             ILogger log)
         {
             if (!req.Headers.TryGetValue("X-MS-TOKEN-AAD-ID-TOKEN", out StringValues idToken))
@@ -63,7 +63,7 @@ namespace GithubExpertsService
             var githubMeResponse = await githubClient.GetStreamAsync("/user");
             var githubIdentity = await JsonSerializer.DeserializeAsync<GithubIdentity>(githubMeResponse);
 
-            return new OkObjectResult($"Hello {githubIdentity.Name}");
+            return new JsonResult(githubIdentity);
         }
     }
 }
