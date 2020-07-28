@@ -12,6 +12,18 @@
     <CodeAnalysisRuleSet>.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="confirmation.html" />
+    <None Remove="reminder.html" />
+    <None Remove="request.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="confirmation.html" />
+    <EmbeddedResource Include="reminder.html" />
+    <EmbeddedResource Include="request.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.SendGrid" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.ServiceBus" Version="4.1.2" />
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="3.0.3" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
