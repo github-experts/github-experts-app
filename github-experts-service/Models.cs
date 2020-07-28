@@ -33,27 +33,6 @@ namespace GithubExpertsService
         public string AvatarUrl { get; set; }
     }
 
-    public class Expert
-    {
-        [JsonPropertyName("handle")]
-        public string Handle { get; set; }
-
-        [JsonPropertyName("repo")]
-        public string Repo { get; set; }
-
-        [JsonPropertyName("tz")]
-        public string Tz { get; set; }
-
-        [JsonPropertyName("starttime")]
-        public string StartTime { get; set; }
-
-        [JsonPropertyName("rate")]
-        public double Rate { get; set; }
-
-        [JsonPropertyName("opentodonate")]
-        public bool OpenToDonate { get; set; }
-    }
-
     public class DailyAvailability
     {
         [JsonPropertyName("date")]
@@ -85,40 +64,6 @@ namespace GithubExpertsService
         // no availability, but 8/3 - 8/7 all have availability.
         [JsonPropertyName("bitmap")]
         public string Bitmap { get; set; }
-    }
-
-    public class Appointment
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; }
-
-        [JsonPropertyName("date")]
-        public string Date { get; set; }
-
-        [JsonPropertyName("time")]
-        public string Time { get; set; }
-
-        [JsonPropertyName("requestor")]
-        public string Requestor { get; set; }
-
-        // Status is requested, accepted, rejected, or completed 
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
-
-        [JsonPropertyName("details")]
-        public string Details { get; set; }
-
-        [JsonPropertyName("rate")]
-        public double Rate { get; set; }
-
-        [JsonPropertyName("requestfree")]
-        public bool RequestFree { get; set; }
-
-        [JsonPropertyName("expert")]
-        public string Expert { get; set; }
-
-        [JsonPropertyName("repo")]
-        public string Repo { get; set; }
     }
 
     public class RequestError {
