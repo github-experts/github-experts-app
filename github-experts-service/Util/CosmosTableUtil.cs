@@ -1,11 +1,4 @@
-<<<<<<< HEAD
-namespace GithubExpertsService.Api
-{
-    using System;
-    using Microsoft.Azure.Cosmos.Table;
-internal static class Common
-=======
-namespace GithubExperts.Api
+namespace GithubExperts.Api.Util
 {
     using System;
     using Microsoft.Azure.Cosmos.Table;
@@ -13,27 +6,29 @@ namespace GithubExperts.Api
     /// <summary>
     ///
     /// </summary>
-    internal static class Common
->>>>>>> 60ce718d9f1d0a42cae3f049684c1a2b4ce3822f
+    internal static class CosmosTableUtil
     {
         /// <summary>
         /// Returns an initialized CosmosTableClient.
         /// </summary>
-        public static readonly Lazy<CloudTableClient> CosmosTableClient = new Lazy<CloudTableClient>(() =>
+        public static readonly Lazy<CloudTableClient> GetClient = new Lazy<CloudTableClient>(() =>
         {
-<<<<<<< HEAD
-=======
             // TODO: move hard coded values to env variables
->>>>>>> 60ce718d9f1d0a42cae3f049684c1a2b4ce3822f
             return new CloudTableClient(
                 new Uri("https://github-experts-cosmos.table.cosmos.azure.com:443/"),
                 new StorageCredentials(
                     "github-experts-cosmos",
                     "jFtzLcKfZclFCHLnA3ZhguupQKKwNUsIw6KE2nUMebefb8J6ddvnTrtn5Ffd7niuY73eTmX6f5zpGqjyhKctiA=="));
         });
-<<<<<<< HEAD
-    }
-=======
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="tableName"></param>
+        /// <returns></returns>
+        public static CloudTable GetTableReference(string tableName)
+        {
+            return GetClient.Value.GetTableReference(tableName);
+        }
     }
 }
->>>>>>> 60ce718d9f1d0a42cae3f049684c1a2b4ce3822f

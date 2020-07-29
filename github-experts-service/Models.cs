@@ -1,4 +1,4 @@
-namespace GithubExpertsService
+namespace GithubExperts.Api
 {
     using System.Collections.Generic;
     using System.Text.Json.Serialization;
@@ -33,6 +33,7 @@ namespace GithubExpertsService
         public string AvatarUrl { get; set; }
     }
 
+<<<<<<< HEAD
     public class Expert
     {
         [JsonPropertyName("handle")]
@@ -54,6 +55,8 @@ namespace GithubExpertsService
         public bool OpenToDonate { get; set; }
     }
 
+=======
+>>>>>>> 60ce718d9f1d0a42cae3f049684c1a2b4ce3822f
     public class DailyAvailability
     {
         [JsonPropertyName("date")]
@@ -64,7 +67,11 @@ namespace GithubExpertsService
 
         // bitmap is a string that corresponds to each 30 minute segment
         // for an Expert beginning with their start time. A bitmap corresponding
+<<<<<<< HEAD
         // to an Expert available from 9am to 11am, with a 10:30 appointment 
+=======
+        // to an Expert available from 9am to 11am, with a 10:30 appointment
+>>>>>>> 60ce718d9f1d0a42cae3f049684c1a2b4ce3822f
         // booked would look like "AAAB" (9:00 available, 9:30 available,
         // 10:00 available, 10:30 booked)
         [JsonPropertyName("bitmap")]
@@ -87,6 +94,7 @@ namespace GithubExpertsService
         public string Bitmap { get; set; }
     }
 
+<<<<<<< HEAD
     public class Appointment
     {
         [JsonPropertyName("id")]
@@ -124,5 +132,35 @@ namespace GithubExpertsService
     public class RequestError {
         [JsonPropertyName("message")]
         public string Message { get; set; }
+=======
+    public class RequestError
+    {
+        [JsonPropertyName("message")]
+        public string Message { get; set; }
+    }
+
+    public class EmailMessage
+    {
+        [JsonPropertyName("to")]
+        public string To { get; set; }
+
+        [JsonPropertyName("template")]
+        public string Template { get; set; }
+
+        [JsonPropertyName("placeholders")]
+        public Dictionary<string, string> Placeholders { get; set; } = new Dictionary<string, string>();
+    }
+
+    public class EmailToSend
+    {
+        [JsonPropertyName("to")]
+        public string To { get; set; }
+
+        [JsonPropertyName("body")]
+        public string Body { get; set; }
+
+        [JsonPropertyName("subject")]
+        public string Subject { get; set; }
+>>>>>>> 60ce718d9f1d0a42cae3f049684c1a2b4ce3822f
     }
 }

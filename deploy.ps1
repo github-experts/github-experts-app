@@ -8,6 +8,8 @@ $b2cClientId = $env:B2C_CLIENT_ID
 $b2cTenantName = $env:B2C_TENANT_NAME
 $resourceGroup = $env:APP_GROUP
 $appName = $env:APP_NAME
+$sendgridAPIKey = $env:SENDGRID_API_KEY
+$sendGridPassword = $end:SENDGRID_PASSWORD
 
 #region Resources
 
@@ -20,7 +22,7 @@ az login `
 $deployment = az deployment group create `
   --resource-group $resourceGroup `
   --template-file $projectRoot/azuredeploy.json `
-  --parameters appName=$appName b2cClientId=$b2cClientId b2cTenantName=$b2cTenantName `
+  --parameters appName=$appName b2cClientId=$b2cClientId b2cTenantName=$b2cTenantName sendgridPassword=$sendGridPassword sendgridApiKey=$sendgridAPIKey `
   --output json `
 | ConvertFrom-Json
 
