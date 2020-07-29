@@ -3,16 +3,17 @@ import styled from 'styled-components';
 import { CustomDatePicker } from 'components/CustomDatePicker';
 import { ToggleButton } from 'components/ToggleButton';
 import { RequestFormStyles } from '../index.style';
+import moment from 'moment';
 import { Link } from 'react-router-dom';
 
 const tutors = [
   {
-    id: 1,
+    id: '1',
     name: 'pniko',
     labels: ['$50', '30-min session', 'Open to donate time'],
   },
   {
-    id: 2,
+    id: '2',
     name: 'wkild',
     labels: ['$2500', '30-min session'],
   },
@@ -33,11 +34,61 @@ const timeslots = [
   { value: '02:30 AM' },
 ];
 
+const shortDateOptions = { weekday: 'short', month: 'numeric', day: 'numeric' };
+
 export const RequestFormStart = styled(({ className, children }) => {
-  const [startDate, setStartDate] = useState(new Date());
-  const CustomDateInput = ({ value, onClick }) => (
-    <ToggleButton onClick={onClick}>Another Date</ToggleButton>
-  );
+  const today = moment().startOf('day');
+  const tomorrow = today.add(1, 'days');
+
+  const [activeTutor, setActiveTutor] = useState(tutors[0]);
+  const [activeTimeslot, setActiveTimeslot] = useState(null);
+  const [days, setDays] = useState([
+    {
+      id: 'today',
+      name:
+        'Today (' +
+        today.toDate().toLocaleDateString(undefined, shortDateOptions) +
+        ')',
+      value: today.toDate(),
+    },
+    {
+      id: 'tomorrow',
+      name:
+        'Tomorrow (' +
+        tomorrow.toDate().toLocaleDateString(undefined, shortDateOptions) +
+        ')',
+      value: tomorrow.toDate(),
+    },
+  ]);
+  const [activeDay, setActiveDay] = useState(days[0]);
+
+  function handleTutorChanged(event) {
+    let tutor = tutors.find((t) => t.id === event.target.value);
+    setActiveTutor(tutor);
+  }
+
+  function handleAnotherDate(date) {
+    date.setHours(0, 0, 0, 0);
+
+    let day = days.find((d) => d.value.getTime() === date.getTime());
+
+    if (!day) {
+      // Remove 'other' date if it exists
+      let newDays = [...days].filter((d) => d.id !== 'other');
+
+      // Add a new 'other' date
+      newDays.push({
+        id: 'other',
+        name: date.toLocaleDateString(undefined, shortDateOptions),
+        value: date,
+      });
+      setDays(newDays);
+
+      day = newDays[2];
+    }
+
+    setActiveDay(day);
+  }
 
   return (
     <div className={`${className} request-form d-flex flex-column`}>
@@ -45,31 +96,42 @@ export const RequestFormStart = styled(({ className, children }) => {
         <div className={`${className}`}>
           <p className="pb-2 text-bold">Select your tutor</p>
           <div className="d-inline-flex pb-4">
-            <select className="tutor-select pl-2 mr-2">
+            <select
+              className="tutor-select pl-2 mr-2"
+              onChange={handleTutorChanged}
+            >
               {tutors.map((tutor) => (
-                <option key={tutor.id}>{tutor.name}</option>
+                <option key={tutor.id} value={tutor.id}>
+                  {tutor.name}
+                </option>
               ))}
             </select>
             <div className="d-inline-flex flex-items-center flex-wrap">
-              <span className="IssueLabel IssueLabel--big Label--gray mr-1 mb-1">
-                $50
-              </span>
-              <span className="IssueLabel IssueLabel--big Label--gray mr-1 mb-1">
-                30-min session
-              </span>
-              <span className="IssueLabel IssueLabel--big Label--gray mr-1 mb-1">
-                Open to donate time
-              </span>
+              {activeTutor.labels.map((label) => (
+                <span
+                  key={label}
+                  className="IssueLabel IssueLabel--big Label--gray mr-1 mb-1"
+                >
+                  {label}
+                </span>
+              ))}
             </div>
           </div>
           <p className="text-bold pb-2">Pick a date</p>
           <div className="pb-4">
-            <ToggleButton selected>Today (Thu 7/24)</ToggleButton>
-            <ToggleButton>Tomorrow (Fri 7/25)</ToggleButton>
+            {days.map((day) => (
+              <ToggleButton
+                key={day.id}
+                value={day.id}
+                selected={day === activeDay}
+                onClick={() => setActiveDay(day)}
+              >
+                {day.name}
+              </ToggleButton>
+            ))}
             <CustomDatePicker
-              selected={startDate}
-              onChange={(date) => setStartDate(date)}
-              customInput={<CustomDateInput />}
+              selected={activeDay.value}
+              onChange={handleAnotherDate}
             />
           </div>
           <p className="text-bold">Pick a timeslot</p>
@@ -82,6 +144,8 @@ export const RequestFormStart = styled(({ className, children }) => {
                 key={timeslot.value}
                 classes="timeslot-button"
                 disabled={timeslot.unavailable}
+                selected={timeslot.value === activeTimeslot}
+                onClick={() => setActiveTimeslot(timeslot.value)}
               >
                 {timeslot.value}
               </ToggleButton>
