@@ -22,7 +22,7 @@ namespace GithubExperts.Api.DataAccess
             return result.FirstOrDefault();
         }
 
-        public static async Task<List<AppointmentEntity>> GetAppointmentsAsync(string repo, string handle, DateTime startDate, DateTime endDate)
+        public static async Task<IList<AppointmentEntity>> GetAppointmentsAsync(string repo, string handle, DateTime startDate, DateTime endDate)
         {
             TableQuery<AppointmentEntity> query = new TableQuery<AppointmentEntity>()
                 .Where(TableQuery.CombineFilters(
@@ -38,7 +38,7 @@ namespace GithubExperts.Api.DataAccess
             return await GetAppointmentsAsync(query);
         }
 
-        public static async Task<List<AppointmentEntity>> GetAppointmentsAsync(string repo, DateTime startDate, DateTime endDate)
+        public static async Task<IList<AppointmentEntity>> GetAppointmentsAsync(string repo, DateTime startDate, DateTime endDate)
         {
             TableQuery<AppointmentEntity> query = new TableQuery<AppointmentEntity>()
                 .Where(TableQuery.CombineFilters(
@@ -51,7 +51,7 @@ namespace GithubExperts.Api.DataAccess
             return await GetAppointmentsAsync(query);
         }
 
-        private static async Task<List<AppointmentEntity>> GetAppointmentsAsync(TableQuery<AppointmentEntity> query)
+        private static async Task<IList<AppointmentEntity>> GetAppointmentsAsync(TableQuery<AppointmentEntity> query)
         {
             // Read in schedule for this repo and handle for these dates
             var table = CosmosTableUtil.GetTableReference("schedule");

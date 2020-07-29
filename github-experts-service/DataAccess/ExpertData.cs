@@ -9,7 +9,7 @@ namespace GithubExperts.Api.DataAccess
 
     public static class ExpertData
     {
-        public static async Task<List<ExpertEntity>> GetExpertsAsync(string repo)
+        public static async Task<IList<ExpertEntity>> GetExpertsAsync(string repo)
         {
             TableQuery<ExpertEntity> query = new TableQuery<ExpertEntity>()
                 .Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, repo));
@@ -26,7 +26,7 @@ namespace GithubExperts.Api.DataAccess
             return results.FirstOrDefault();
         }
 
-        private static async Task<List<ExpertEntity>> GetExpertsAsync(TableQuery<ExpertEntity> query)
+        private static async Task<IList<ExpertEntity>> GetExpertsAsync(TableQuery<ExpertEntity> query)
         {
             // Read in schedule for this repo and handle for these dates
             var table = CosmosTableUtil.GetTableReference("experts");
@@ -36,10 +36,8 @@ namespace GithubExperts.Api.DataAccess
             do
             {
                 var queryResult = await table.ExecuteQuerySegmentedAsync(query, continuationToken);
-                foreach (var item in queryResult)
-                {
-                    result.Add(item);
-                }
+                continuationToken = queryResult.ContinuationToken;
+                result.AddRange(queryResult.Results);
             }
             while (continuationToken != null);
 
