@@ -7,28 +7,31 @@ on:
 
 jobs:
   deploy:
-    runs-on: 'windows-latest'
+    runs-on: "windows-latest"
 
     steps:
       - uses: actions/checkout@v2
 
       - uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: '3.1.x'
+          dotnet-version: "3.1.x"
 
       - uses: actions/setup-node@v1
         with:
-          node-version: '12.x'
+          node-version: "12.x"
 
       - run: ./deploy.ps1
         shell: pwsh
         env:
           SP_SECRET: ${{ secrets.SP_SECRET }}
-          SP_CLIENT: 'dd082b18-ec0f-43b5-94da-dcb9da0714d0'
-          SP_TENANT: '72f988bf-86f1-41af-91ab-2d7cd011db47'
-          APP_GROUP: 'github-experts'
-          APP_NAME: 'githubexperts'
-          B2C_CLIENT_ID: '144e9bd1-f04e-4454-abc6-1dae3af35cc4'
-          B2C_TENANT_NAME: 'h3dev'
+          SP_CLIENT: "dd082b18-ec0f-43b5-94da-dcb9da0714d0"
+          SP_TENANT: "72f988bf-86f1-41af-91ab-2d7cd011db47"
+          APP_GROUP: "github-experts"
+          APP_NAME: "githubexperts"
+          B2C_CLIENT_ID: "144e9bd1-f04e-4454-abc6-1dae3af35cc4"
+          B2C_TENANT_NAME: "h3dev"
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
           SENDGRID_PASSWORD: ${{ secrets.SENDGRID_PASSWORD }}
+          COSMOS_PRIMARY_KEY: ${{ secrets.COSMOS_PRIMARY_KEY }}
+          COSMOS_SECONDARY_KEY: ${{ secrets.COSMOS_SECONDARY_KEY }}
+          COSMOS_THROUGHPUT": 400
