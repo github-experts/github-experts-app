@@ -5,7 +5,6 @@ import { ToggleButton } from 'components/ToggleButton';
 import { RequestFormStyles } from '../index.style';
 import moment from 'moment';
 
-
 const tutors = [
   {
     id: '1',
@@ -46,7 +45,9 @@ export const RequestFormStart = styled(({ className, children }) => {
     {
       id: 'today',
       name:
-        'Today (' + today.toDate().toLocaleDateString(undefined, shortDateOptions) + ')',
+        'Today (' +
+        today.toDate().toLocaleDateString(undefined, shortDateOptions) +
+        ')',
       value: today.toDate(),
     },
     {
