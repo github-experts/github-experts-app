@@ -35,7 +35,19 @@ namespace GithubExperts.Api.Models
         }
 
         [JsonPropertyName("handle")]
-        public string Handle { get; set; }
+        public string Handle
+        {
+            get
+            {
+                return RowKey;
+            }
+
+            set
+            {
+                RowKey = value;
+            }
+        }
+        
 
         [JsonPropertyName("timezone")]
         public string TimeZone { get; set; }
