@@ -6,12 +6,12 @@ import { RequestFormStyles } from '../index.style';
 
 const tutors = [
   {
-    id: 1,
+    id: '1',
     name: 'pniko',
     labels: ['$50', '30-min session', 'Open to donate time'],
   },
   {
-    id: 2,
+    id: '2',
     name: 'wkild',
     labels: ['$2500', '30-min session'],
   },
