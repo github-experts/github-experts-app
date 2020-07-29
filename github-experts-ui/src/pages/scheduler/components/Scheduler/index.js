@@ -37,7 +37,18 @@ const resources = [
 
 const CustomComponent = styled(({ className, data }) => {
   return (
-    <div className={`${className} custom-component`}>{`@${data.name}`}</div>
+    <div className={`${className} custom-component`}>
+      {`@${data.name}`}
+      <div className="Popover position-relative">
+        <div className="Popover-message Popover-message--top-left p-4 mt-2 Box box-shadow-large">
+          <h4 className="mb-2">Popover heading</h4>
+          <p>Message about this particular piece of UI.</p>
+          <button type="submit" className="btn btn-outline mt-2 text-bold">
+            Got it!
+          </button>
+        </div>
+      </div>
+    </div>
   );
 })`
   & {
@@ -46,6 +57,9 @@ const CustomComponent = styled(({ className, data }) => {
     border-left-style: solid;
     height: 47px;
     border-left-width: 6px;
+  }
+  .tooltipped {
+    height: 400px;
   }
 `;
 
