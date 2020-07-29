@@ -7,15 +7,24 @@ import { StyledLink } from 'components/StyledLink';
 export const Header = styled(({ className, headerOptions }) => {
   return (
     <header className={`${className} d-flex Header`}>
-      <div className="title d-flex">
-        <img src={GithubLogo} alt="" />
-        <img className="experts-logo" src={ExpertsLogo} alt="" />
+      <div className="nav d-flex flex-items-center flex-1">
+        <div className="title d-flex">
+          <img src={GithubLogo} alt="" />
+          <img className="experts-logo" src={ExpertsLogo} alt="" />
+        </div>
+        {headerOptions.map((item, i) => (
+          <StyledLink key={i} to={item.path}>
+            <p className="nav-items Header-item">{item.text}</p>
+          </StyledLink>
+        ))}
       </div>
-      {headerOptions.map((item, i) => (
-        <StyledLink key={i} to={item.path}>
-          <p className="nav-items Header-item">{item.text}</p>
-        </StyledLink>
-      ))}
+      <img
+        class="avatar avatar-small mr-2"
+        alt="jonrohan"
+        src="https://github.com/jonrohan.png?v=3&s=40"
+        width="40"
+        height="40"
+      />
     </header>
   );
 })`
