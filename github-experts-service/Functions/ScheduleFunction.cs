@@ -41,7 +41,7 @@ namespace GithubExperts.Api.Functions
                 endDate = DateTime.Today.AddDays(31);
             }
 
-            var result = await AppointmentData.GetAppointmentsAsync(repo, startDate, endDate);
+            var result = await ScheduleData.GetScheduleAsync(repo, startDate, endDate);
 
             return new OkObjectResult(result);
         }

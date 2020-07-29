@@ -33,6 +33,8 @@
     <PackageReference Include="Microsoft.Azure.WebJobs.Extensions.CosmosDB" Version="3.0.3"/>
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.15.0-beta2"/>
     <PackageReference Include="Microsoft.Azure.Cosmos.Table" Version="2.0.0-preview"/>
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="YamlDotNet" Version="8.1.2"/>
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

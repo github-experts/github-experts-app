@@ -61,10 +61,7 @@ namespace GithubExperts.Api.DataAccess
             do
             {
                 var queryResult = await table.ExecuteQuerySegmentedAsync(query, continuationToken);
-                foreach (var item in queryResult)
-                {
-                    result.Add(item);
-                }
+                result.AddRange(queryResult);
             }
             while (continuationToken != null);
 
