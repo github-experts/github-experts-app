@@ -25,16 +25,7 @@
         "description": "Name of the tenant used for B2C authentication"
       }
     },
-    // SKU parameters
-    "storageAccountSku": {
-      "type": "string",
-      "defaultValue": "Standard_LRS",
-      "allowedValues": [
-        "Standard_LRS",
-        "Standard_GRS",
-        "Standard_RAGRS"
-      ]
-    },
+    // TODO
     "sendgridPassword": {
       "type": "string",
       "metadata": {
@@ -46,6 +37,16 @@
       "metadata": {
         "description": "API Key for the SendGrid service"
       }
+    },
+    // SKU parameters
+    "storageAccountSku": {
+      "type": "string",
+      "defaultValue": "Standard_LRS",
+      "allowedValues": [
+        "Standard_LRS",
+        "Standard_GRS",
+        "Standard_RAGRS"
+      ]
     },
     "cosmosThroughput": {
       "type": "int",
