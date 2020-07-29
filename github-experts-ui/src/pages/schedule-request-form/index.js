@@ -7,7 +7,7 @@ import { RequestForm } from './request-form/index';
 import { RequestFormSuccess } from './request-form-success';
 
 export const ScheduleRequestFormStart = () => (
-  <Layout headerOptions={[{ text: 'Schedule', path: '/schedule' }]}>
+  <Layout headerOptions={[{ text: 'Schedule', path: '/scheduler' }]}>
     <BoxPanel>
       <BreadCrumbs
         breadCrumbPaths={[
@@ -22,7 +22,7 @@ export const ScheduleRequestFormStart = () => (
 );
 
 export const ScheduleRequestForm = () => (
-  <Layout headerOptions={[{ text: 'Schedule', path: '/schedule' }]}>
+  <Layout headerOptions={[{ text: 'Schedule', path: '/scheduler' }]}>
     <BoxPanel>
       <BreadCrumbs breadCrumbPaths={['patniko', 'experts-demo', 'Requests']} />
       <RequestForm />
@@ -31,7 +31,7 @@ export const ScheduleRequestForm = () => (
 );
 
 export const ScheduleRequestFormSuccess = () => (
-  <Layout headerOptions={[{ text: 'Schedule', path: '/schedule' }]}>
+  <Layout headerOptions={[{ text: 'Schedule', path: '/scheduler' }]}>
     <BoxPanel>
       <BreadCrumbs breadCrumbPaths={['patniko', 'experts-demo', 'Requests']} />
       <RequestFormSuccess />

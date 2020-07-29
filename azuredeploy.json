@@ -344,6 +344,10 @@
             },
             // Backend application environment variables
             {
+              "name": "FRONTEND_HOSTNAME",
+              "value": "[replace(replace(reference(concat('Microsoft.Storage/storageAccounts/', variables('frontendName'))).primaryEndpoints.web, 'https://', ''), '/', '')]"
+            },
+            {
               "name": "COSMOS_DATABASE_NAME",
               "value": "[variables('databaseName')]"
             },

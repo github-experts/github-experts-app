@@ -4,6 +4,7 @@ import { CustomDatePicker } from 'components/CustomDatePicker';
 import { ToggleButton } from 'components/ToggleButton';
 import { RequestFormStyles } from '../index.style';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 
 const tutors = [
   {
@@ -153,9 +154,11 @@ export const RequestFormStart = styled(({ className, children }) => {
         </div>
       </div>
       <footer className="d-flex flex-justify-end flex-items-center pr-4">
-        <button className="btn btn-outline mr-2" type="button">
-          <span>Next Step</span>
-        </button>
+        <Link to="/schedule-request-form">
+          <button className="btn btn-outline mr-2" type="button">
+            <span>Next Step</span>
+          </button>
+        </Link>
       </footer>
     </div>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { RequestFormStyles } from '../index.style';
+import { Link } from 'react-router-dom';
 
 export const ColumnInfo = styled(({ className, label, text }) => {
   return (
@@ -8,9 +9,7 @@ export const ColumnInfo = styled(({ className, label, text }) => {
       <div className="container">
         <p>{label}</p>
         <p>
-          <span className="IssueLabel IssueLabel--big bg-blue text-white mr-1">
-            {text}
-          </span>
+          <span className="IssueLabel IssueLabel--big mr-1">{text}</span>
         </p>
       </div>
     </div>
@@ -18,6 +17,10 @@ export const ColumnInfo = styled(({ className, label, text }) => {
 })`
   .container {
     line-height: 2rem;
+  }
+  .IssueLabel {
+    background-color: #dbedff;
+    color: #0366d6;
   }
 `;
 
@@ -64,9 +67,11 @@ export const RequestForm = styled(({ className }) => {
         </div>
       </div>
       <footer className="d-flex flex-justify-end flex-items-center pr-4">
-        <button className="btn btn-outline mr-2" type="button">
-          <span>Request now</span>
-        </button>
+        <Link to="/schedule-request-form-success">
+          <button className="btn btn-outline mr-2" type="button">
+            <span>Request now</span>
+          </button>
+        </Link>
       </footer>
     </div>
   );
