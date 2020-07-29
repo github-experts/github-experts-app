@@ -1,13 +1,19 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export const ToggleButton = styled(({ className, value, selected, disabled, children, classes }) => {
+export const ToggleButton = styled(({ className, onClick, value, selected, disabled, children, classes }) => {
 
   var btnClass = selected ? 'btn-selected' : '';
   var isDisabled = disabled ? 'disabled' : '';
 
   return (
-    <button type="button" className={`${className} ${classes} ${btnClass} btn mr-2 mb-2`} disabled={isDisabled}>{children}</button>
+    <button 
+      type="button" 
+      className={`${className} ${classes} ${btnClass} btn mr-2 mb-2`} 
+      disabled={isDisabled}
+      onClick={onClick}>
+        {children}
+    </button>
   )
 })`
   & {
