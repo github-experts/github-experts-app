@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
 const { createAppAuth } = require("@octokit/auth-app");
-
+const { Octokit } = require("@octokit/rest");
 
 const github_app_id = process.env['GITHUB_APP_ID'];
 
@@ -66,47 +66,70 @@ module.exports = {
     //Encapsulates GitHub logic accessed via GitHub app.
     createApp: function () {
         //Authenticates as the GitHub app by private key.
-        function asApp() {
-            return Promise.resolve(auth({ type: "auth" }));
+        async function asApp() {
+            return await auth({ type: "auth" });
         }
 
         // Authenticates as the given installation of the GitHub app, which gives us access to actions in user repo.
-        function asInstallation(installationId) {
-            return auth({
+        async function asInstallation(installationId) {
+            const response = await auth({
                 type: "installation",
                 installationId: installationId,
             });
+
+            const github = new Octokit({
+                type: "token",
+                token: response.token,
+                tokenType: "installation"
+            });
+            return github;
         }
 
         // https://developer.github.com/early-access/integrations/authentication/#as-an-installation
-        function createToken(installationId) {
-            return asApp().then(github => {
-                return github.apps.createInstallationToken({ installation_id: installationId });
-            });
+        async function createToken(installationId) {
+            const github = await asApp();
+            return github.apps.createInstallationToken({ installation_id: installationId });
         }
 
         //Gets json config file from the root of the user repository.
-        function getConfig(username, repo, installationId) {
-            return asInstallation(installationId).then(github => {
-                return github.repos.getContent({ owner: username, repo: repo, path: 'README.md' });
-            });
+        async function getConfig(username, repo, installationId) {
+            const github = await asInstallation(installationId);
+            const content = github.repos.getContent({ owner: username, repo: repo, path: '/README.md' });
+            return content;
         }
 
-        function gitConfigExists(githubUsername, repoName, installationId) {
+        async function gitConfigExists(githubUsername, repoName, installationId) {
             try {
-                //Trying to retrieve AppCenter apps linked to this repo.
-                return getConfig(githubUsername, repoName, installationId).then((config) => {
-                    //If user chose to store appcenter-pr.json in his repo, we use it.
-                    config = JSON.parse(Buffer.from(config.data.content, 'base64'));
+                const config = await getConfig(githubUsername, repoName, installationId);
+                config = JSON.parse(Buffer.from(config.data.content, 'base64'));
+                if (config) {
                     return true;
-                }, (error) => {
-                    context.log(error);
+                } else {
                     return false;
-                });
+                }
+
             } catch (error) {
                 Promise.reject(error);
             }
         }
+
+        async function createBranch(owner, repo, installationId) {
+            const github = await asInstallation(installationId);
+            const ref = "heads/master";
+            const branchers = await github.repos.listBranches({
+                owner,
+                repo
+            });
+
+            console.log(github);
+            const mainBranch = github.git.createRef({
+                owner: owner,
+                repo: repo,
+                ref: "github-experts-config",
+                sha: mainBranch.sha
+            });
+        }
+
 
         //Generates jwt signature for GitHub app authentication from the private key and GitHub app id.
         function generateJwt(id, cert) {
@@ -120,6 +143,6 @@ module.exports = {
             return jwt.sign(payload, cert, { algorithm: 'RS256' });
         }
 
-        return { asApp, asInstallation, createToken, getConfig, gitConfigExists };
+        return { asApp, asInstallation, createToken, getConfig, gitConfigExists, createBranch };
     }
 };

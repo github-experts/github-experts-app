@@ -1,6 +1,4 @@
 const githubRequests = require('../shared/github');
-
-
 const github_app = githubRequests.createApp();
 
 module.exports = async function (context, request) {
@@ -13,16 +11,18 @@ module.exports = async function (context, request) {
         const repositories = request.body.repositories;
         const owner = request.body.sender.login;
 
-        repositories.forEach(r => {
-            const repoName = r.full_name;
-            const repoId = r.id;
+        for (i = 0; i < repositories.length; i++) {
+            const repo = repositories[i];
+            const repoName = repo.full_name;
+            const repoId = repo.id;
 
             try {
-                const configExists = github_app.gitConfigExists(owner, repoName, installationId);
+                const configExists = false;// github_app.gitConfigExists(owner, repoName, installationId);
 
                 if (!configExists) {
-                    
+
                     // Create branch
+                    await github_app.createBranch(owner, repoName, installationId)
 
                     // Commit config file
 
@@ -37,7 +37,7 @@ module.exports = async function (context, request) {
             } catch (error) {
                 context.log(error);
             }
-        });
+        }
 
         context.res = {
             // status: 200, /* Defaults to 200 */
