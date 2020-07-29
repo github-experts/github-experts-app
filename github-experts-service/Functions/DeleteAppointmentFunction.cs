@@ -24,13 +24,13 @@ namespace GithubExperts.Api.Functions
             string id,
             ILogger log)
         {
-            log.LogInformation("DeleteAppointment(): Received request");
+            log.LogInformation(string.Format("DeleteAppointment(): Received request to delete appointment with keys {0} {1}", repo, id));
 
             try
             {
                 var table = CosmosTableUtil.GetTableReference("schedule");
 
-                var appointment = await AppointmentData.GetAppointmentAsync(repo, id);
+                TableEntity appointment = await AppointmentData.GetAppointmentAsync(repo, id);
                 if (appointment != null)
                 {
                     var result = await table.ExecuteAsync(TableOperation.Delete(appointment));
@@ -43,7 +43,7 @@ namespace GithubExperts.Api.Functions
             }
             catch (Exception ex)
             {
-                log.LogError(string.Format("DeleteAppointment(): Exception occurred {0}:{1}", ex.Message, ex.InnerException));
+                log.LogError(string.Format("DeleteAppointment(): Exception occurred {0}:{1}", ex.Message, ex));
                 return new InternalServerErrorResult();
             }
         }
