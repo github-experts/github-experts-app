@@ -33,30 +33,6 @@ namespace GithubExperts.Api
         public string AvatarUrl { get; set; }
     }
 
-<<<<<<< HEAD
-    public class Expert
-    {
-        [JsonPropertyName("handle")]
-        public string Handle { get; set; }
-
-        [JsonPropertyName("repo")]
-        public string Repo { get; set; }
-
-        [JsonPropertyName("tz")]
-        public string Tz { get; set; }
-
-        [JsonPropertyName("starttime")]
-        public string StartTime { get; set; }
-
-        [JsonPropertyName("rate")]
-        public double Rate { get; set; }
-
-        [JsonPropertyName("opentodonate")]
-        public bool OpenToDonate { get; set; }
-    }
-
-=======
->>>>>>> 60ce718d9f1d0a42cae3f049684c1a2b4ce3822f
     public class DailyAvailability
     {
         [JsonPropertyName("date")]
@@ -67,11 +43,7 @@ namespace GithubExperts.Api
 
         // bitmap is a string that corresponds to each 30 minute segment
         // for an Expert beginning with their start time. A bitmap corresponding
-<<<<<<< HEAD
-        // to an Expert available from 9am to 11am, with a 10:30 appointment 
-=======
         // to an Expert available from 9am to 11am, with a 10:30 appointment
->>>>>>> 60ce718d9f1d0a42cae3f049684c1a2b4ce3822f
         // booked would look like "AAAB" (9:00 available, 9:30 available,
         // 10:00 available, 10:30 booked)
         [JsonPropertyName("bitmap")]
@@ -94,45 +66,6 @@ namespace GithubExperts.Api
         public string Bitmap { get; set; }
     }
 
-<<<<<<< HEAD
-    public class Appointment
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; }
-
-        [JsonPropertyName("date")]
-        public string Date { get; set; }
-
-        [JsonPropertyName("time")]
-        public string Time { get; set; }
-
-        [JsonPropertyName("requestor")]
-        public string Requestor { get; set; }
-
-        // Status is requested, accepted, rejected, or completed 
-        [JsonPropertyName("status")]
-        public string Status { get; set; }
-
-        [JsonPropertyName("details")]
-        public string Details { get; set; }
-
-        [JsonPropertyName("rate")]
-        public double Rate { get; set; }
-
-        [JsonPropertyName("requestfree")]
-        public bool RequestFree { get; set; }
-
-        [JsonPropertyName("expert")]
-        public string Expert { get; set; }
-
-        [JsonPropertyName("repo")]
-        public string Repo { get; set; }
-    }
-
-    public class RequestError {
-        [JsonPropertyName("message")]
-        public string Message { get; set; }
-=======
     public class RequestError
     {
         [JsonPropertyName("message")]
@@ -161,6 +94,5 @@ namespace GithubExperts.Api
 
         [JsonPropertyName("subject")]
         public string Subject { get; set; }
->>>>>>> 60ce718d9f1d0a42cae3f049684c1a2b4ce3822f
     }
 }
