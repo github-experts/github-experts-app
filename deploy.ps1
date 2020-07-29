@@ -10,7 +10,6 @@ $resourceGroup = $env:APP_GROUP
 $appName = $env:APP_NAME
 $sendgridAPIKey = $env:SENDGRID_API_KEY
 $sendGridPassword = $env:SENDGRID_PASSWORD
-$cosmosThroughput = $env:COSMOS_THROUGHPUT
 
 #region Resources
 
@@ -23,7 +22,7 @@ az login `
 $deployment = az deployment group create `
   --resource-group $resourceGroup `
   --template-file $projectRoot/azuredeploy.json `
-  --parameters appName=$appName b2cClientId=$b2cClientId b2cTenantName=$b2cTenantName sendgridPassword=$sendGridPassword sendgridApiKey=$sendgridAPIKey cosmosThroughput=$cosmosThroughput `
+  --parameters appName=$appName b2cClientId=$b2cClientId b2cTenantName=$b2cTenantName sendgridPassword=$sendGridPassword sendgridApiKey=$sendgridAPIKey `
   --output json `
 | ConvertFrom-Json
 

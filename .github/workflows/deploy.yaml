@@ -32,6 +32,3 @@ jobs:
           B2C_TENANT_NAME: "h3dev"
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
           SENDGRID_PASSWORD: ${{ secrets.SENDGRID_PASSWORD }}
-          COSMOS_PRIMARY_KEY: ${{ secrets.COSMOS_PRIMARY_KEY }}
-          COSMOS_SECONDARY_KEY: ${{ secrets.COSMOS_SECONDARY_KEY }}
-          COSMOS_THROUGHPUT: 400
