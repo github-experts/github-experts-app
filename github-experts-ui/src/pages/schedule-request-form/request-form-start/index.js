@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { CustomDatePicker } from 'components/CustomDatePicker';
 import { ToggleButton } from 'components/ToggleButton';
 import { RequestFormStyles } from '../index.style';
+import moment from 'moment';
+
 
 const tutors = [
   {
@@ -35,12 +37,8 @@ const timeslots = [
 const shortDateOptions = { weekday: 'short', month: 'numeric', day: 'numeric' };
 
 export const RequestFormStart = styled(({ className, children }) => {
-  // this date stuff feels weird, should probably use a fancy library for this
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
-  const tomorrow = new Date();
-  tomorrow.setDate(today.getDate() + 1);
-  tomorrow.setHours(0, 0, 0, 0);
+  const today = moment().startOf('day');
+  const tomorrow = today.add(1, 'days');
 
   const [activeTutor, setActiveTutor] = useState(tutors[0]);
   const [activeTimeslot, setActiveTimeslot] = useState(null);
@@ -48,16 +46,16 @@ export const RequestFormStart = styled(({ className, children }) => {
     {
       id: 'today',
       name:
-        'Today (' + today.toLocaleDateString(undefined, shortDateOptions) + ')',
-      value: today,
+        'Today (' + today.toDate().toLocaleDateString(undefined, shortDateOptions) + ')',
+      value: today.toDate(),
     },
     {
       id: 'tomorrow',
       name:
         'Tomorrow (' +
-        tomorrow.toLocaleDateString(undefined, shortDateOptions) +
+        tomorrow.toDate().toLocaleDateString(undefined, shortDateOptions) +
         ')',
-      value: tomorrow,
+      value: tomorrow.toDate(),
     },
   ]);
   const [activeDay, setActiveDay] = useState(days[0]);
