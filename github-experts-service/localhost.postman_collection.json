@@ -1,0 +1,55 @@
+{
+	"info": {
+		"_postman_id": "2d71bf91-5f84-4898-b504-4f8528982438",
+		"name": "Hackathon (local)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create appointment",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\t\"date\": \"07/29/2020\",\n\t\t\"time\": \"01:00\",\n\t\t\"requestor\": \"@steverhall\",\n\t\t\"status\": \"requested\",\n\t\t\"details\": \"Discuss project\",\n\t\t\"rate\": \"50\",\n\t\t\"requestfree\": false,\n\t\t\"tutor\": \"patniko\",\n\t\t\"repo\": \"patniko/githubexperts\"\n\t}"
+				},
+				"url": {
+					"raw": "http://localhost:7071/api/appointment",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"appointment"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Experts for a Repo",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:7071/api/experts/githubexperts",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "7071",
+					"path": [
+						"api",
+						"experts",
+						"githubexperts"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
