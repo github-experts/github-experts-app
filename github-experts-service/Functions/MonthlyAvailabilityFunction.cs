@@ -1,6 +1,7 @@
 namespace GithubExperts.Api.Functions
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Linq;
     using System.Threading.Tasks;
@@ -45,29 +46,51 @@ namespace GithubExperts.Api.Functions
                 endDate = DateTime.Today.AddDays(45);
             }
 
+            // Protect from too large of a range
+            if ((endDate - startDate).TotalDays > 100)
+            {
+                endDate = startDate.AddDays(100);
+            }
+
             var result = await AppointmentData.GetAppointmentsAsync(repo, handle, startDate, endDate);
             var expert = await ExpertData.GetExpertAsync(handle);
 
+            var availabilityByDay = new List<AvailabilityEntity>((int)(endDate - startDate).TotalDays);
+
             if (result.Any())
             {
+                // Compute number of 30 minute time slots for this expert
+                var totalSlotsForExpert = (expert.EndTime.TimeOfDay - expert.StartTime.TimeOfDay).TotalHours / 30;
                 var dayLoop = startDate;
+
                 while (dayLoop <= endDate)
                 {
+                    bool hasAvailability = false;
+
                     // Check if day is a "working" day
-                    if (expert.ExcludeWeekends == true &&
-                        (dayLoop.DayOfWeek == DayOfWeek.Saturday || dayLoop.DayOfWeek == DayOfWeek.Sunday))
+                    if (expert.ExcludeWeekends == false ||
+                        (dayLoop.DayOfWeek != DayOfWeek.Saturday && dayLoop.DayOfWeek != DayOfWeek.Sunday))
                     {
-                        dayLoop = dayLoop.AddDays(1);
-                        continue;
+                        // Look how many time slots were filled and compare against total slots
+                        var numAppointments = result.Count(x => x.DateTime.Date == dayLoop.Date);
+
+                        hasAvailability = numAppointments < totalSlotsForExpert;
                     }
 
-                    // Look how many time slots were filled and compare against total slots
+                    availabilityByDay.Add(new AvailabilityEntity
+                        {
+                            StartDate = dayLoop,
+                            EndDate = dayLoop,
+                            Available = hasAvailability,
+                        });
+
+                    dayLoop = dayLoop.AddDays(1);
                 }
             }
 
             log.LogInformation("here");
 
-            return new OkResult();
+            return new OkObjectResult(availabilityByDay);
         }
     }
 }

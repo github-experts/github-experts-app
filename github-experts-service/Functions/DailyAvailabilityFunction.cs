@@ -42,6 +42,12 @@ namespace GithubExperts.Api.Functions
                 endDate = DateTime.Today.AddDays(7);
             }
 
+            // Protect from too large of a range
+            if ((endDate - startDate).TotalDays > 100)
+            {
+                endDate = startDate.AddDays(100);
+            }
+
             var result = await AppointmentData.GetAppointmentsAsync(repo, handle, startDate, endDate);
 
             var expert = await ExpertData.GetExpertAsync(handle);
