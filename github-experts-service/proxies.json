@@ -1,0 +1,33 @@
+{
+    "$schema": "http://json.schemastore.org/proxies",
+    "proxies": {
+        "ui.root": {
+            "matchCondition": {
+                "methods": ["GET"],
+                "route": "/site"
+            },
+            "backendUri": "https://%FRONTEND_HOSTNAME%"
+        },
+        "ui.routes": {
+            "matchCondition": {
+                "methods": ["GET"],
+                "route": "/site/{*path}"
+            },
+            "backendUri": "https://%FRONTEND_HOSTNAME%/{path}"
+        },
+        "ui.favicon": {
+            "matchCondition": {
+                "methods": ["GET"],
+                "route": "/favicon.ico"
+            },
+            "backendUri": "https://%FRONTEND_HOSTNAME%/favicon.ico"
+        },
+        "ui.static": {
+            "matchCondition": {
+                "methods": ["GET"],
+                "route": "/static/{*path}"
+            },
+            "backendUri": "https://%FRONTEND_HOSTNAME%/static/{path}"
+        }
+    }
+}

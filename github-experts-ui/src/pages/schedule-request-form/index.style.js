@@ -4,6 +4,9 @@ import media from 'styled-media-query';
 export const RequestFormStyles = css`
   height: calc(100% - 52px);
 
+  .pills {
+    background: #f7fbff;
+  }
   .top-section {
     padding: 2rem 3rem;
   }
