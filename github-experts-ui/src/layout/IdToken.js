@@ -9,5 +9,5 @@ export default function IdToken() {
 
   dispatch(userStore.login({ idToken }));
 
-  return <Redirect to="/" />;
+  return <Redirect to="/schedule-request-form-start" />;
 }

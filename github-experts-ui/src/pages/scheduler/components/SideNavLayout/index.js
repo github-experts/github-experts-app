@@ -17,8 +17,8 @@ export const SideNavLayout = styled(({ className, repoInfo }) => {
       <div className="side-nav p-3">
         <p className="title f6 text-bold mb-4">All repo</p>
         <div className="repo-names">
-          {repoInfo.map((item) => (
-            <div className="repo-item d-flex flex-items-center pb-2">
+          {repoInfo.map((item, i) => (
+            <div key={i} className="repo-item d-flex flex-items-center pb-2">
               <CSSCircle color="red" className="mr-3" />
               <p className="author-name">{item.authorName}</p>
               <span>&nbsp;/&nbsp;</span>

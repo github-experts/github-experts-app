@@ -14,12 +14,14 @@ const appointments = [
     endDate: '2018-10-31T11:15',
     title: 'Meeting',
     type: 'private',
+    name: 'Adam',
   },
   {
     startDate: '2018-10-31T07:30',
     endDate: '2018-10-31T09:00',
     title: 'Go to a gym',
     type: 'work',
+    name: 'Karen',
   },
 ];
 const resources = [
@@ -33,8 +35,10 @@ const resources = [
   },
 ];
 
-const CustomComponent = styled(({ className }) => {
-  return <div className={`${className} custom-component`}>@Leo</div>;
+const CustomComponent = styled(({ className, data }) => {
+  return (
+    <div className={`${className} custom-component`}>{`@${data.name}`}</div>
+  );
 })`
   & {
     background: rgb(255, 247, 237);
@@ -53,10 +57,12 @@ export const MyScheduler = () => {
       <ViewState
         currentDate={currentDate}
         onCurrentDateChange={setCurrentDate}
+        startDayHour={8}
       />
-      <WeekView />
+      <WeekView startDayHour={6} />
       <Appointments
         appointmentComponent={(props) => {
+          console.log('props: ', props);
           return <CustomComponent {...props} />;
         }}
       />
