@@ -13,12 +13,13 @@ namespace GithubExperts.Api.Util
         /// </summary>
         public static readonly Lazy<CloudTableClient> GetClient = new Lazy<CloudTableClient>(() =>
         {
-            // TODO: move hard coded values to env variables
+            var databaseName = string.Format("{0}_cosmos", Environment.GetEnvironmentVariable("APP_NAME"));
             return new CloudTableClient(
-                new Uri("https://github-experts-cosmos.table.cosmos.azure.com:443/"),
+                new Uri(string.Format("https://{0}.table.cosmos.azure.com:443/", databaseName)),
                 new StorageCredentials(
-                    "github-experts-cosmos",
-                    "jFtzLcKfZclFCHLnA3ZhguupQKKwNUsIw6KE2nUMebefb8J6ddvnTrtn5Ffd7niuY73eTmX6f5zpGqjyhKctiA=="));
+                    databaseName,
+                    Environment.GetEnvironmentVariable("COSMOS_PRIMARY_KEY"),
+                    Environment.GetEnvironmentVariable("COSMOS_SECONDARY_KEY")));
         });
 
         /// <summary>
