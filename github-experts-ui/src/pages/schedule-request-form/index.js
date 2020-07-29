@@ -9,7 +9,13 @@ import { RequestFormSuccess } from './request-form-success';
 export const ScheduleRequestFormStart = () => (
   <Layout headerOptions={[{ text: 'Schedule', path: '/schedule' }]}>
     <BoxPanel>
-      <BreadCrumbs breadCrumbPaths={['patniko', 'experts-demo', 'Schedule a coaching session']} />
+      <BreadCrumbs
+        breadCrumbPaths={[
+          'patniko',
+          'experts-demo',
+          'Schedule a coaching session',
+        ]}
+      />
       <RequestFormStart></RequestFormStart>
     </BoxPanel>
   </Layout>

@@ -8,19 +8,12 @@ const tutors = [
   {
     id: 1,
     name: 'pniko',
-    labels: [
-      '$50',
-      '30-min session',
-      'Open to donate time'
-    ]
+    labels: ['$50', '30-min session', 'Open to donate time'],
   },
   {
     id: 2,
     name: 'wkild',
-    labels: [
-      '$2500',
-      '30-min session'
-    ]
+    labels: ['$2500', '30-min session'],
   },
 ];
 
@@ -56,9 +49,13 @@ export const RequestFormStart = styled(({ className, children }) => {
                 <option key={tutor.id}>{tutor.name}</option>
               ))}
             </select>
-            <div className='d-inline-flex flex-items-center flex-wrap'>
-              <span className="IssueLabel IssueLabel--big Label--gray mr-1 mb-1">$50</span>
-              <span className="IssueLabel IssueLabel--big Label--gray mr-1 mb-1">30-min session</span>
+            <div className="d-inline-flex flex-items-center flex-wrap">
+              <span className="IssueLabel IssueLabel--big Label--gray mr-1 mb-1">
+                $50
+              </span>
+              <span className="IssueLabel IssueLabel--big Label--gray mr-1 mb-1">
+                30-min session
+              </span>
               <span className="IssueLabel IssueLabel--big Label--gray mr-1 mb-1">
                 Open to donate time
               </span>
@@ -75,7 +72,9 @@ export const RequestFormStart = styled(({ className, children }) => {
             />
           </div>
           <p className="text-bold">Pick a timeslot</p>
-          <p className="pb-3">Timezone <span className='timezone'>PST</span></p>
+          <p className="pb-3">
+            Timezone <span className="timezone">PST</span>
+          </p>
           <div className="pb-4">
             {timeslots.map((timeslot) => (
               <ToggleButton
@@ -111,7 +110,7 @@ export const RequestFormStart = styled(({ className, children }) => {
     width: 100px;
   }
   .timezone {
-    color: #1999DF;
+    color: #1999df;
     font-weight: bold;
   }
 `;
