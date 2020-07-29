@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import DatePicker from 'react-datepicker';
 import { ToggleButton } from 'components/ToggleButton';
@@ -7,16 +7,20 @@ import ChevronDown from 'assets/chevron-down.svg';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
-export const CustomDatePicker = styled(({ className }) => {
-  const [startDate, setStartDate] = useState(new Date());
+export const CustomDatePicker = styled(({ className, selected, onChange }) => {
+  function handleDateChange(date) {
+    onChange(date);
+  }
+
+  console.log(selected);
 
   return (
     <DatePicker
       className={className}
       calendarClassName={className}
       popperClassName={className}
-      selected={startDate}
-      onChange={(date) => setStartDate(date)}
+      selected={selected}
+      onChange={handleDateChange}
       customInput={
         <ToggleButton>
           <div className="d-flex flex-items-center">
