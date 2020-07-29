@@ -46,16 +46,26 @@
       "metadata": {
         "description": "API Key for the SendGrid service"
       }
+    },
+    "cosmosThroughput": {
+      "type": "int",
+      "defaultValue": 400,
+      "minValue": 400,
+      "maxValue": 10000,
+      "metadata": {
+        "description": "Number of RUs to provision for database"
+      }
     }
   },
   "variables": {
     "frontendName": "[concat(parameters('appName'), 'ui')]",
     "backendName": "[concat(parameters('appName'), 'api')]",
     "serviceBusName": "[concat(parameters('appName'), 'sb')]",
+    "databaseName": "[concat(parameters('appName'), 'cosmos')]",
     "location": "[resourceGroup().location]",
     "defaultSASKeyName": "RootManageSharedAccessKey",
     "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusName'), variables('defaultSASKeyName'))]",
-	  "sbVersion": "2017-04-01"//,
+    "sbVersion": "2017-04-01" //,
     //"sendgridName": "[concat(parameters('appName'), 'sendGrid')]"
   },
   "resources": [
@@ -113,6 +123,104 @@
         "Application_Type": "web"
       }
     },
+    // Cosmos Table Storage
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts",
+      "apiVersion": "2020-04-01",
+      "name": "[variables('databaseName')]",
+      "location": "[variables('location')]",
+      "tags": {
+        "defaultExperience": "Azure Table",
+        "hidden-cosmos-mmspecial": "",
+        "CosmosAccountType": "Non-Production"
+      },
+      "kind": "GlobalDocumentDB",
+      "properties": {
+        "publicNetworkAccess": "Enabled",
+        "enableAutomaticFailover": false,
+        "enableMultipleWriteLocations": false,
+        "isVirtualNetworkFilterEnabled": false,
+        "virtualNetworkRules": [],
+        "disableKeyBasedMetadataWriteAccess": false,
+        "enableFreeTier": false,
+        "enableAnalyticalStorage": false,
+        "databaseAccountOfferType": "Standard",
+        "consistencyPolicy": {
+          "defaultConsistencyLevel": "BoundedStaleness",
+          "maxIntervalInSeconds": 86400,
+          "maxStalenessPrefix": 1000000
+        },
+        "locations": [
+          {
+            "locationName": "[variables('location')]",
+            "failoverPriority": 0,
+            "isZoneRedundant": false
+          }
+        ],
+        "capabilities": [
+          {
+            "name": "EnableTable"
+          }
+        ],
+        "ipRules": []
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/tables",
+      "apiVersion": "2020-04-01",
+      "name": "[concat(parameters('appName'), 'experts')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseName'))]"
+      ],
+      "properties": {
+        "resource": {
+          "id": "experts"
+        },
+        "options": {}
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/tables",
+      "apiVersion": "2020-04-01",
+      "name": "[concat(parameters('appName'), 'schedule')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseName'))]"
+      ],
+      "properties": {
+        "resource": {
+          "id": "schedule"
+        },
+        "options": {}
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/tables/throughputSettings",
+      "apiVersion": "2020-04-01",
+      "name": "[concat(parameters('appName'), 'experts/default')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts/tables', variables('databaseName'), 'experts')]",
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseName'))]"
+      ],
+      "properties": {
+        "resource": {
+          "throughput": "[parameters('cosmosThroughput')]"
+        }
+      }
+    },
+    {
+      "type": "Microsoft.DocumentDB/databaseAccounts/tables/throughputSettings",
+      "apiVersion": "2020-04-01",
+      "name": "[concat(parameters('appName'), 'schedule/default')]",
+      "dependsOn": [
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts/tables', variables('databaseName'), 'schedule')]",
+        "[resourceId('Microsoft.DocumentDB/databaseAccounts', variables('databaseName'))]"
+      ],
+      "properties": {
+        "resource": {
+          "throughput": "[parameters('cosmosThroughput')]"
+        }
+      }
+    },
     // Service Bus
     {
       "type": "Microsoft.ServiceBus/namespaces",
@@ -120,11 +228,11 @@
       "name": "[variables('serviceBusName')]",
       "location": "[variables('location')]",
       "sku": {
-          "name": "Basic",
-          "tier": "Basic"
+        "name": "Basic",
+        "tier": "Basic"
       },
       "properties": {
-          "zoneRedundant": false
+        "zoneRedundant": false
       }
     },
     {
@@ -133,14 +241,14 @@
       "name": "[concat(variables('serviceBusName'), '/RootManageSharedAccessKey')]",
       "location": "[variables('location')]",
       "dependsOn": [
-          "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName'))]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName'))]"
       ],
       "properties": {
-          "rights": [
-              "Listen",
-              "Manage",
-              "Send"
-          ]
+        "rights": [
+          "Listen",
+          "Manage",
+          "Send"
+        ]
       }
     },
     {
@@ -149,21 +257,21 @@
       "name": "[concat(variables('serviceBusName'), '/email')]",
       "location": "[variables('location')]",
       "dependsOn": [
-          "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName'))]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName'))]"
       ],
       "properties": {
-          "lockDuration": "PT30S",
-          "maxSizeInMegabytes": 1024,
-          "requiresDuplicateDetection": false,
-          "requiresSession": false,
-          "defaultMessageTimeToLive": "P14D",
-          "deadLetteringOnMessageExpiration": false,
-          "enableBatchedOperations": true,
-          "duplicateDetectionHistoryTimeWindow": "PT10M",
-          "maxDeliveryCount": 10,
-          "status": "Active",
-          "enablePartitioning": false,
-          "enableExpress": false
+        "lockDuration": "PT30S",
+        "maxSizeInMegabytes": 1024,
+        "requiresDuplicateDetection": false,
+        "requiresSession": false,
+        "defaultMessageTimeToLive": "P14D",
+        "deadLetteringOnMessageExpiration": false,
+        "enableBatchedOperations": true,
+        "duplicateDetectionHistoryTimeWindow": "PT10M",
+        "maxDeliveryCount": 10,
+        "status": "Active",
+        "enablePartitioning": false,
+        "enableExpress": false
       }
     },
     {
@@ -172,21 +280,21 @@
       "name": "[concat(variables('serviceBusName'), '/tosend')]",
       "location": "[variables('location')]",
       "dependsOn": [
-          "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName'))]"
+        "[resourceId('Microsoft.ServiceBus/namespaces', variables('serviceBusName'))]"
       ],
       "properties": {
-          "lockDuration": "PT30S",
-          "maxSizeInMegabytes": 1024,
-          "requiresDuplicateDetection": false,
-          "requiresSession": false,
-          "defaultMessageTimeToLive": "P14D",
-          "deadLetteringOnMessageExpiration": false,
-          "enableBatchedOperations": true,
-          "duplicateDetectionHistoryTimeWindow": "PT10M",
-          "maxDeliveryCount": 10,
-          "status": "Active",
-          "enablePartitioning": false,
-          "enableExpress": false
+        "lockDuration": "PT30S",
+        "maxSizeInMegabytes": 1024,
+        "requiresDuplicateDetection": false,
+        "requiresSession": false,
+        "defaultMessageTimeToLive": "P14D",
+        "deadLetteringOnMessageExpiration": false,
+        "enableBatchedOperations": true,
+        "duplicateDetectionHistoryTimeWindow": "PT10M",
+        "maxDeliveryCount": 10,
+        "status": "Active",
+        "enablePartitioning": false,
+        "enableExpress": false
       }
     },
     // SendGrid
