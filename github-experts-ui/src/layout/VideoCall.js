@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Loading from 'layout/Loading';
 
+const apiRoot = process.env.REACT_APP_API_ROOT || '/api';
+
 function sessionDone(roomName, durationInMinutes) {
-  fetch(`${process.env.REACT_APP_API_ROOT}/Appointment/${roomName}`, {
+  fetch(`${apiRoot}/Appointment/${roomName}`, {
     method: 'PATCH',
     headers: {
       // TODO: once auth is integrated into the frontend, add Authorization header here to pass-through B2C Bearer token
