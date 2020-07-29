@@ -1,31 +1,53 @@
-const path = require('path');
-const fs = require('fs');
 const githubRequests = require('../shared/github');
-const pem = fs.readFileSync(path.resolve(__dirname, '../shared/private-key.pem'));
-const github_app_id = process.env['GITHUB_APP_ID'];
-const github_app = githubRequests.createApp({
-    id: github_app_id,
-    cert: pem
-});
 
-module.exports = async function (context, req) {
-    const installationId = 10883173;
-    const owner = "geopet"
 
-    // request.body.repository.owner.login, request.body.repository.name, request.body.installation.id
+const github_app = githubRequests.createApp();
+
+module.exports = async function (context, request) {
 
     context.log('JavaScript HTTP trigger function processed a request.');
 
-    if (req.query.name || (req.body && req.body.name)) {
+    if (request && request.body.installation.id && request.body.repositories.length > 0 && request.body.sender.login) {
+
+        const installationId = request.body.installation.id;
+        const repositories = request.body.repositories;
+        const owner = request.body.sender.login;
+
+        repositories.forEach(r => {
+            const repoName = r.full_name;
+            const repoId = r.id;
+
+            try {
+                const configExists = github_app.gitConfigExists(owner, repoName, installationId);
+
+                if (!configExists) {
+                    
+                    // Create branch
+
+                    // Commit config file
+
+                    // Commit a change to README
+
+                    // Open PR
+
+                    context.log(`Configuration created for: ${owner} (${installationId}) ${repoName}`);
+                } else {
+                    context.log(`Configuration already exists for: ${owner} (${installationId}) ${repoName}`);
+                }
+            } catch (error) {
+                context.log(error);
+            }
+        });
+
         context.res = {
             // status: 200, /* Defaults to 200 */
-            body: "Hello " + (req.query.name || req.body.name)
+            body: `Completed processing.`
         };
     }
     else {
         context.res = {
             status: 400,
-            body: "Please pass a name on the query string or in the request body"
+            body: "Please pass a valid body."
         };
     }
 };

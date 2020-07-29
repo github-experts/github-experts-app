@@ -7,8 +7,10 @@
     "test": "echo \"No tests yet...\""
   },
   "dependencies": {
-    "@octokit/rest": "^18.0.3",
+    "@octokit/auth-app": "^2.4.10",
+    "install": "^0.13.0",
     "jsonwebtoken": "^8.5.1",
+    "request": "^2.88.2",
     "request-promise": "^4.2.6"
   },
   "devDependencies": {}
