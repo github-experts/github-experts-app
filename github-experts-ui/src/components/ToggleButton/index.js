@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 export const ToggleButton = styled(
   ({ className, onClick, value, selected, disabled, children, classes }) => {
-    var btnClass = selected ? 'btn-selected' : '';
-    var isDisabled = disabled ? 'disabled' : '';
+    const btnClass = selected ? 'btn-selected' : '';
+    const isDisabled = disabled ? 'disabled' : '';
 
     return (
       <button
