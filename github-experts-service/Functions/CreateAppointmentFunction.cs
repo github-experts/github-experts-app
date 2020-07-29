@@ -29,6 +29,9 @@ namespace GithubExperts.Api.Functions
                 string requestBody = reader.ReadToEnd();
                 AppointmentEntity appointmentEntity = JsonConvert.DeserializeObject<AppointmentEntity>(requestBody);
 
+                // Set status for new appointment request
+                appointmentEntity.Status = "requested";
+
                 var table = CosmosTableUtil.GetTableReference("schedule");
                 var result = await table.ExecuteAsync(TableOperation.InsertOrMerge(appointmentEntity)); // TODO collisions should be rare given that the id is auto-genned, should we just go with Insert?
                 return new OkObjectResult(result.Result as AppointmentEntity);

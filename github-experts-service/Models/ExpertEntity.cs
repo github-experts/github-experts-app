@@ -6,20 +6,6 @@ namespace GithubExperts.Api.Models
 
     public class ExpertEntity : TableEntity
     {
-        [JsonPropertyName("organization")]
-        public string Organization
-        {
-            get
-            {
-                return RowKey;
-            }
-
-            set
-            {
-                RowKey = value;
-            }
-        }
-
         [JsonPropertyName("repo")]
         public string Repository
         {

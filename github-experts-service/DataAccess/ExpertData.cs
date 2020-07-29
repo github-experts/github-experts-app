@@ -12,7 +12,7 @@ namespace GithubExperts.Api.DataAccess
         public static async Task<IList<ExpertEntity>> GetExpertsAsync(string repo)
         {
             TableQuery<ExpertEntity> query = new TableQuery<ExpertEntity>()
-                .Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, repo));
+                .Where(TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, repo));
 
             return await GetExpertsAsync(query);
         }
@@ -20,7 +20,7 @@ namespace GithubExperts.Api.DataAccess
         public static async Task<ExpertEntity> GetExpertAsync(string handle)
         {
             TableQuery<ExpertEntity> query = new TableQuery<ExpertEntity>()
-                .Where(TableQuery.GenerateFilterCondition("PartionKey", QueryComparisons.Equal, handle));
+                .Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, handle));
 
             var results = await GetExpertsAsync(query);
             return results.FirstOrDefault();
