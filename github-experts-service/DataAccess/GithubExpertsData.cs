@@ -13,25 +13,22 @@ namespace GithubExperts.Api.DataAccess
     using YamlDotNet.Serialization;
     using YamlDotNet.Serialization.NamingConventions;
 
-
-    public static class GithubTutorsData
+    public static class GithubExpertsData
     {
-        static HttpClient client = new HttpClient();
+        internal static HttpClient client = new HttpClient();
 
-        public static async Task<Tutors> GetAppointmentAsync(string repo)
+        public static async Task<GithubExperts> GetTutorYamlAsync(string repo)
         {
             // Retrieve YAML file from GitHub repo
-            //string url = string.Format("https://raw.githubusercontent.com/{0}/main/.github/tutors.yml", repo);
-            string url = "https://gist.githubusercontent.com/steverhall/39c562086f9ccc694f5b6da4fb7019e3/raw/ee6f80f0dbab234232267f0833b01f0f976f6f22/tutors.yml";
+            string url = string.Format("https://raw.githubusercontent.com/{0}/main/.github/tutors.yml", repo);
+            
             var response = await client.GetStringAsync(new Uri(url));
 
-            // Process YAML
+            // Deserialize YAML
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
-            var experts = deserializer.Deserialize<Tutors>(response);
-
-            Console.WriteLine(response);
+            var experts = deserializer.Deserialize<GithubExperts>(response);
 
             return experts;
         }
