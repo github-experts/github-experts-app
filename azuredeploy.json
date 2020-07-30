@@ -58,13 +58,16 @@
       }
     },
     "GITHUB_APP_ID": {
-      "type": "String"
+      "type": "securestring",
+      "minLength": 1
     },
     "GITHUB_CLIENT_ID": {
-      "type": "String"
+      "type": "securestring",
+      "minLength": 1
     },
     "GITHUB_CLIENT_SECRET": {
-      "type": "String"
+      "type": "securestring",
+      "minLength": 1
     }
   },
   "variables": {
@@ -443,10 +446,9 @@
         "name": "[variables('storageaccount_github_app_name')]",
         "location": "[variables('location')]",
         "sku": {
-            "name": "Standard_LRS",
-            "tier": "Standard"
+            "name": "[parameters('storageAccountSku')]"
         },
-        "kind": "Storage",
+        "kind": "StorageV2",
         "properties": {
             "networkAcls": {
                 "bypass": "AzureServices",
@@ -541,23 +543,7 @@
       ],
       "kind": "functionapp",
       "properties": {
-          "enabled": true,
-          "hostNameSslStates": [
-              {
-                  "name": "[concat(variables('github_app_name'), '.azurewebsites.net')]",
-                  "sslState": "Disabled",
-                  "hostType": "Standard"
-              },
-              {
-                  "name": "[concat(variables('github_app_name'), '.scm.azurewebsites.net')]",
-                  "sslState": "Disabled",
-                  "hostType": "Repository"
-              }
-          ],
           "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', variables('serverfarms_github_app_name'))]",
-          "reserved": false,
-          "isXenon": false,
-          "hyperV": false,
           "siteConfig": {
             "appSettings": [
               {
@@ -579,6 +565,10 @@
               {
                 "name": "FUNCTIONS_EXTENSION_VERSION",
                 "value": "~3"
+              },
+              {
+                "name": "WEBSITE_NODE_DEFAULT_VERSION",
+                "value": "~10"
               },
               {
                 "name": "FUNCTIONS_WORKER_RUNTIME",
