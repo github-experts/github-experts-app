@@ -3,9 +3,6 @@ namespace GithubExperts.Api.Util
     using System;
     using Microsoft.Azure.Cosmos.Table;
 
-    /// <summary>
-    ///
-    /// </summary>
     internal static class CosmosTableUtil
     {
         /// <summary>
@@ -22,11 +19,6 @@ namespace GithubExperts.Api.Util
                     Environment.GetEnvironmentVariable("COSMOS_SECONDARY_KEY")));
         });
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="tableName"></param>
-        /// <returns></returns>
         public static CloudTable GetTableReference(string tableName)
         {
             return GetClient.Value.GetTableReference(tableName);
