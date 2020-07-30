@@ -21,7 +21,7 @@ namespace GithubExperts.Api.DataAccess
         {
             TableQuery<AppointmentEntity> query = new TableQuery<AppointmentEntity>()
                 .Where(TableQuery.CombineFilters(
-                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, repo.Replace("/", "::")),
+                        TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, repo),
                         TableOperators.And,
                         TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, id)));
 
