@@ -18,9 +18,9 @@ export const SchedulerPage = () => {
   useEffect(() => {
     request(
       // Need to get the repo name from somewhere else
-      `schedule/github-experts+github-experts-sample-repo?startdate=${
-        getWeek().start
-      }&enddate=${getWeek().end}`,
+      `appointments/patniko?startdate=${getWeek().start}&enddate=${
+        getWeek().end
+      }`,
       {
         method: 'GET',
       }
@@ -32,9 +32,10 @@ export const SchedulerPage = () => {
   }, []);
 
   const experts = {};
-  const filteredUniqExperts = uniqBy(data, (item) => item.requestor);
+  const filteredUniqExperts = uniqBy(data, (item) => item.expert);
+
   filteredUniqExperts.forEach((item) => {
-    experts[item.requestor] = randomColor();
+    experts[item.expert] = randomColor();
   });
 
   return (
@@ -43,13 +44,13 @@ export const SchedulerPage = () => {
         <BreadCrumbs breadCrumbPaths={['patniko', 'My Schedule']} />
         <SideNavLayout
           repoInfo={filteredUniqExperts.map((item) => ({
-            authorName: item.requestor,
+            authorName: item.expert,
             repoName: item.partitionKey.split('+')[1],
-            color: experts[item.requestor],
+            color: experts[item.expert],
           }))}
           data={(data || []).map((item) => ({
             ...item,
-            color: experts[item.requestor],
+            color: experts[item.expert],
           }))}
         >
           test

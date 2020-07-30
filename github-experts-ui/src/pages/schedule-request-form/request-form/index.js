@@ -120,9 +120,7 @@ export const RequestForm = styled(
               };
 
               createAppt(payload).then(() => {
-                history.push('/schedule-request-form-success', {
-                  test: 'something',
-                });
+                history.push('/schedule-request-form-success', payload);
               });
             }}
           >
