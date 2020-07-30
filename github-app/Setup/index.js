@@ -48,7 +48,7 @@ module.exports = async function (context, request) {
                             const PULL_REQUEST_TITLE = "Add Github Experts configuration";
                             const README_LINK = `
                             \`\`\`
-<a href="https://githubexpertsapi.azurewebsites.net/.auth/login/aad?post_login_redirect_uri=%2Fsite%2Fschedule"><img src="" /></a>
+<a href="https://githubexpertsapi.azurewebsites.net/site/scheduler/${owner}/${repo}">Schedule time with an Expert!</a>
                             \`\`\``;
                             const PR_MESSAGE = PULL_REQUEST_BODY + README_LINK;
 
