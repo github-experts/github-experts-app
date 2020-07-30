@@ -1,6 +1,7 @@
 namespace GithubExperts.Api.Functions
 {
     using System;
+    using System.Collections.Generic;
     using System.IO;
     using System.Threading.Tasks;
     using System.Web.Http;
@@ -38,8 +39,14 @@ namespace GithubExperts.Api.Functions
                 if (appointment != null)
                 {
                     appointment.Status = appointmentEntity.Status;
+                    var expert = await ExpertData.GetExpertAsync(appointment.Expert);
 
+                    // Update record
                     var result = await table.ExecuteAsync(TableOperation.InsertOrReplace(appointment));
+
+                    // Send email to expert
+                    await EmailUtil.SendEmailAsync(appointment, expert);
+
                     return new OkResult();
                 }
                 else

@@ -5,13 +5,15 @@ import { MyScheduler } from '../Scheduler';
 export const CSSCircle = styled.p`
   height: 12px;
   width: 12px;
-  background-color: ${(props) => props.color};
+  background-color: ${(props) => {
+    return props.color;
+  }};
   border-radius: 50%;
   position: relative;
   top: 1px;
 `;
 
-export const SideNavLayout = styled(({ className, repoInfo }) => {
+export const SideNavLayout = styled(({ className, data, repoInfo }) => {
   return (
     <div className={`${className} scheduler-side-nav d-flex`}>
       <div className="side-nav p-3">
@@ -19,7 +21,7 @@ export const SideNavLayout = styled(({ className, repoInfo }) => {
         <div className="repo-names">
           {repoInfo.map((item, i) => (
             <div key={i} className="repo-item d-flex flex-items-center pb-2">
-              <CSSCircle color="red" className="mr-3" />
+              <CSSCircle color={item.color} className="mr-3" />
               <p className="author-name">{item.authorName}</p>
               <span>&nbsp;/&nbsp;</span>
               <p className="repo-name">{item.repoName}</p>
@@ -28,7 +30,7 @@ export const SideNavLayout = styled(({ className, repoInfo }) => {
         </div>
       </div>
       <div className="right-pane flex-1">
-        <MyScheduler />
+        <MyScheduler data={data} />
       </div>
     </div>
   );
@@ -37,7 +39,7 @@ export const SideNavLayout = styled(({ className, repoInfo }) => {
   overflow: hidden;
 
   .side-nav {
-    width: 226px;
+    width: 335px;
     border-right: 0.5px solid #c0c0c0;
   }
   .title {

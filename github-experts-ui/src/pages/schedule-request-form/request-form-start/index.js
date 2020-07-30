@@ -1,25 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { CustomDatePicker } from 'components/CustomDatePicker';
 import { ToggleButton } from 'components/ToggleButton';
 import { RequestFormStyles } from '../index.style';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import {
+  GetExperts,
+  GetMonthlyAvailability,
+  GetDailyAvailability,
+} from 'api/ExpertService';
 
-const tutors = [
-  {
-    id: '1',
-    name: 'pniko',
-    labels: ['$50', '30-min session', 'Open to donate time'],
-  },
-  {
-    id: '2',
-    name: 'wkild',
-    labels: ['$2500', '30-min session'],
-  },
-];
+// TODO: Where do you come from!?!?
+const REPO = 'github-experts+github-experts-sample-repo';
+const REQUESTOR = 'wkilday';
 
-const timeslots = [
+const defaultTimeslots = [
   { value: '09:00 AM' },
   { value: '09:30 AM' },
   { value: '10:00 AM' },
@@ -38,10 +34,16 @@ const shortDateOptions = { weekday: 'short', month: 'numeric', day: 'numeric' };
 
 export const RequestFormStart = styled(({ className, children }) => {
   const today = moment().startOf('day');
-  const tomorrow = today.add(1, 'days');
+  const tomorrow = moment().startOf('day').add(1, 'days');
 
-  const [activeTutor, setActiveTutor] = useState(tutors[0]);
+  const [tutors, setTutors] = useState([]);
+  const [activeTutor, setActiveTutor] = useState(null);
+
+  const [excludeDates, setExcludeDates] = useState([]);
+
+  const [timeslots, setTimeslots] = useState(defaultTimeslots);
   const [activeTimeslot, setActiveTimeslot] = useState(null);
+
   const [days, setDays] = useState([
     {
       id: 'today',
@@ -61,6 +63,35 @@ export const RequestFormStart = styled(({ className, children }) => {
     },
   ]);
   const [activeDay, setActiveDay] = useState(days[0]);
+
+  useEffect(() => {
+    GetExperts(REPO).then((newExperts) => {
+      setTutors(newExperts);
+      setActiveTutor(newExperts[0]);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!activeTutor) return;
+
+    GetMonthlyAvailability(REPO, activeTutor.name).then((monthlyDays) => {
+      let dates = monthlyDays
+        .filter((d) => !d.available)
+        .map((d) => new Date(d.date));
+
+      setExcludeDates(dates);
+    });
+  }, [activeTutor]);
+
+  useEffect(() => {
+    if (!activeTutor || !activeDay) return;
+
+    GetDailyAvailability(REPO, activeTutor.name, activeDay.value).then(
+      (timeslots) => {
+        setTimeslots(timeslots);
+      }
+    );
+  }, [activeDay, activeTutor]);
 
   function handleTutorChanged(event) {
     let tutor = tutors.find((t) => t.id === event.target.value);
@@ -107,14 +138,16 @@ export const RequestFormStart = styled(({ className, children }) => {
               ))}
             </select>
             <div className="d-inline-flex flex-items-center flex-wrap">
-              {activeTutor.labels.map((label) => (
-                <span
-                  key={label}
-                  className="IssueLabel IssueLabel--big Label--gray mr-1 mb-1"
-                >
-                  {label}
-                </span>
-              ))}
+              {activeTutor
+                ? activeTutor.labels.map((label) => (
+                    <span
+                      key={label}
+                      className="IssueLabel IssueLabel--big Label--gray mr-1 mb-1"
+                    >
+                      {label}
+                    </span>
+                  ))
+                : 'Loading...'}
             </div>
           </div>
           <p className="text-bold pb-2">Pick a date</p>
@@ -132,6 +165,7 @@ export const RequestFormStart = styled(({ className, children }) => {
             <CustomDatePicker
               selected={activeDay.value}
               onChange={handleAnotherDate}
+              excludeDates={excludeDates}
             />
           </div>
           <p className="text-bold">Pick a timeslot</p>
@@ -154,7 +188,24 @@ export const RequestFormStart = styled(({ className, children }) => {
         </div>
       </div>
       <footer className="d-flex flex-justify-end flex-items-center pr-4">
-        <Link to="/schedule-request-form">
+        <Link
+          to={{
+            pathname: '/schedule-request-form',
+            state: {
+              DateTime: new Date(
+                moment(activeDay.value).format('YYYY-MM-DD') +
+                  ' ' +
+                  activeTimeslot
+              ),
+              Expert: activeTutor ? activeTutor.name : null,
+              Rate: activeTutor ? activeTutor.rate : null,
+              RequestFree:
+                activeTutor &&
+                activeTutor.labels.includes('Open to donate time'),
+              Requestor: REQUESTOR,
+            },
+          }}
+        >
           <button className="btn btn-outline mr-2" type="button">
             <span>Next Step</span>
           </button>
