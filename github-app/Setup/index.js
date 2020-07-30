@@ -32,7 +32,7 @@ module.exports = async function (context, request) {
             const repoId = repository.id;
 
             try {
-                const configExists = await githubApp.gitConfigExists(owner, repo, installationId);
+                const configExists = await githubApp.gitConfigExists(owner, repo, installationId, CONFIG_PATH, PULL_REQUEST_BRANCH);
 
                 if (!configExists) {
 
@@ -40,9 +40,17 @@ module.exports = async function (context, request) {
                     const branch = await githubApp.createBranch(owner, repo, installationId, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH);
 
                     // Commit config file
-                    const config = yamlConfig.generate(owner);
-                    const configCommit = await githubApp.createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.commit.sha, CONFIG_PATH, "Yaml for Github Experts configuration", config);
-                    const readmeCommit = await githubApp.createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.commit.sha, README_PATH, "Add Github Experts link to README", `link: ${owner}`);
+                    const githubExpertsConfigExists = await githubApp.gitConfigExists(owner, repo, installationId, CONFIG_PATH, PULL_REQUEST_HEAD);
+                    if(!githubExpertsConfigExists) {
+                        const config = yamlConfig.generate(owner);
+                        const configCommit = await githubApp.createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.commit.sha, CONFIG_PATH, "Yaml for Github Experts configuration", config);
+                    }
+                    /*const readmeExists = await githubApp.gitConfigExists(owner, repo, installationId, "/README.md", PULL_REQUEST_HEAD);
+                    if(!readmeExists) {
+                        const readmeCommit = await githubApp.createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.commit.sha, README_PATH, "Add Github Experts link to README", `link: ${owner}`);
+                    } else {
+                        const readmeCommit = await githubApp.createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.commit.sha, README_PATH, "Add Github Experts link to README", `link: ${owner}`);
+                    }*/
 
                     // Open PR
                     const pr = await githubApp.createPullRequest(owner, repo, installationId, PULL_REQUEST_TITLE, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH, PULL_REQUEST_BODY);

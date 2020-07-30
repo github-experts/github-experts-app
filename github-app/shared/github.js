@@ -41,16 +41,15 @@ module.exports = {
             return github;
         }
 
-        async function getConfig(username, repo, installationId) {
+        async function getFile(username, repo, installationId, path, branch) {
             const github = await asInstallation(installationId);
-            const content = await github.repos.getContent({ owner: username, repo: repo, path: '/.github/github-experts.yml' });
+            const content = await github.repos.getContent({ owner: username, repo: repo, path: path, ref: `refs/heads/${branch}` });
             return content;
         }
 
-        async function gitConfigExists(owner, repo, installationId) {
+        async function gitConfigExists(owner, repo, installationId, path, branch) {
             try {
-                const config = await getConfig(owner, repo, installationId);
-                config = JSON.parse(Buffer.from(config.data.content, 'base64'));
+                const config = await getFile(owner, repo, installationId, path, branch);
                 if (config) {
                     return true;
                 } else {
@@ -134,15 +133,14 @@ module.exports = {
         }
 
         async function createPullRequest(owner, repo, installationId, title, head, base, body) {
-            const github = await asInstallation(installationId);
-            const pr = await github.pulls.create({
-                owner,
-                repo,
-                title,
-                head,
-                base,
-                body
-            });
+            const dataString = {
+                title: title,
+                head: head,
+                base: base,
+                body: body
+            };
+            const url = `https://api.github.com/repos/${owner}/${repo}/pulls`;
+            const pr = await getRequest(installationId, url, dataString, "POST");
             return pr;
         }
 
@@ -154,6 +152,6 @@ module.exports = {
             };
             return jwt.sign(payload, cert, { algorithm: 'RS256' });
         }
-        return { asInstallation, getConfig, gitConfigExists, createBranch, createCommit, createPullRequest };
+        return { asInstallation, getFile, gitConfigExists, createBranch, createCommit, createPullRequest };
     }
 };
