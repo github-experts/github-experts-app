@@ -80,7 +80,6 @@ export const RequestFormStart = styled(({ className, children }) => {
         .map((d) => new Date(d.date));
 
       setExcludeDates(dates);
-      setActiveDay(days[0]);
     });
   }, [activeTutor]);
 
