@@ -19,21 +19,21 @@ export const getWeek = () => ({
 export const SchedulerPage = () => {
   const dispatch = useDispatch();
   const params = useParams();
+  const [data, setData] = useState([]);
 
-  const [data, setData] = useState(undefined);
   useEffect(() => {
     request(
       // Need to get the repo name from somewhere else
-      `/api/appointments/${params.expertName}?startdate=${
-        getWeek().start
-      }&enddate=${getWeek().end}`
+      `/api/appointments/${params.owner}?startdate=${getWeek().start}&enddate=${
+        getWeek().end
+      }`
     )
       .then((resp) => resp.json())
       .then((resp) => {
         setData(resp);
         dispatch(storeSchedule(resp));
       });
-  }, [params.expertName, dispatch]);
+  }, [params.owner, dispatch]);
 
   const experts = {};
   const filteredUniqExperts = uniqBy(data, (item) => item.expert);
@@ -45,11 +45,14 @@ export const SchedulerPage = () => {
     <Layout
       headerOptions={[
         { text: 'Schedule', path: '/schedule' },
-        { text: 'Requests', path: '/schedule-summary' },
+        {
+          text: 'Requests',
+          path: `/schedule-summary/${params.owner}/${params.repo}`,
+        },
       ]}
     >
       <BoxPanel>
-        <BreadCrumbs breadCrumbPaths={['patniko', 'My Schedule']} />
+        <BreadCrumbs breadCrumbPaths={[params.owner, 'My Schedule']} />
         <SideNavLayout
           repoInfo={filteredUniqExperts.map((item) => ({
             authorName: item.expert,

@@ -1,6 +1,7 @@
 import React from 'react';
 import { CSSCircle } from 'pages/scheduler/components/SideNavLayout';
 import styled from 'styled-components';
+import { useHistory, useParams } from 'react-router-dom';
 
 export const RepoCell = styled(({ className, color, repo }) => (
   <div className={`${className} repo-cell d-flex`}>
@@ -26,13 +27,34 @@ export const RepoCell = styled(({ className, color, repo }) => (
   }
 `;
 
-export const AcceptanceButtons = styled(({ className }) => {
-  return (
-    <div className={`${className} acceptance-buttons`}>
-      <button className="btn btn-primary mr-2 bg-blue">Accept</button>
-      <button class="btn btn-invisible text-gray" type="button">
-        Reject
-      </button>
-    </div>
-  );
-})``;
+export const AcceptanceButtons = styled(
+  ({ className, updateAppt, ...rest }) => {
+    const history = useHistory();
+    const params = useParams();
+    return (
+      <div className={`${className} acceptance-buttons`}>
+        <button
+          className="btn btn-primary mr-2 bg-blue"
+          onClick={() =>
+            updateAppt('accepted', rest.row.original.id).then(() => {
+              history.push(`/scheduler/${params.owner}/${params.repo}`);
+            })
+          }
+        >
+          Accept
+        </button>
+        <button
+          class="btn btn-invisible text-gray"
+          type="button"
+          onClick={() =>
+            updateAppt('rejected', rest.row.original.id).then((resp) => {
+              history.push(`/scheduler/${params.owner}/${params.repo}`);
+            })
+          }
+        >
+          Reject
+        </button>
+      </div>
+    );
+  }
+)``;

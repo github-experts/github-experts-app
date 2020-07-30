@@ -1,11 +1,13 @@
 import { AcceptanceButtons, RepoCell } from './components.misc';
+import React, { useCallback } from 'react';
 import { useSortBy, useTable } from 'react-table';
-import React from 'react';
 import { Styles } from './summary-table.style';
 import { getSchedule } from '../../../stores/schedulerStore';
-import { useSelector } from 'react-redux';
 import moment from 'moment';
 import { randomColor } from 'pages/scheduler/components/Scheduler/CustomCell';
+import request from 'utils/request';
+import { useSelector } from 'react-redux';
+import { useParams } from 'react-router-dom/cjs/react-router-dom.min';
 
 function Table({ columns, data }) {
   const {
@@ -56,6 +58,18 @@ function Table({ columns, data }) {
 
 export function SummaryTable() {
   const appointments = useSelector(getSchedule);
+  const params = useParams();
+  const updateAppt = useCallback(
+    (status, id) => {
+      return request(`api/appointment/${params.repo}/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          status: status,
+        }),
+      });
+    },
+    [params.repo]
+  );
 
   const columns = React.useMemo(
     () => [
@@ -102,10 +116,12 @@ export function SummaryTable() {
       },
       {
         Header: 'Acceptance',
-        Cell: (props) => <AcceptanceButtons />,
+        Cell: (props) => (
+          <AcceptanceButtons {...props} updateAppt={updateAppt} />
+        ),
       },
     ],
-    []
+    [updateAppt]
   );
 
   return (

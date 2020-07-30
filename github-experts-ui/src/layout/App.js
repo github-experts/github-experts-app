@@ -43,10 +43,14 @@ export default function App() {
         <Switch>
           <Route
             exact
-            path="/scheduler/:expertName"
+            path="/scheduler/:owner/:repo"
             component={SchedulerPage}
           />
-          <Route exact path="/schedule-summary" component={ScheduleSummary} />
+          <Route
+            exact
+            path="/schedule-summary/:owner/:repo"
+            component={ScheduleSummary}
+          />
           <Route
             exact
             path="/schedule-request-form-start/:owner/:repo"
