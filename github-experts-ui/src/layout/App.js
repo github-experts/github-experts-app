@@ -49,17 +49,17 @@ export default function App() {
           <Route exact path="/schedule-summary" component={ScheduleSummary} />
           <Route
             exact
-            path="/schedule-request-form-start"
+            path="/schedule-request-form-start/:owner/:repo"
             component={ScheduleRequestFormStart}
           />
           <Route
             exact
-            path="/schedule-request-form"
+            path="/schedule-request-form/:owner/:repo"
             component={ScheduleRequestForm}
           />
           <Route
             exact
-            path="/schedule-request-form-success"
+            path="/schedule-request-form-success/:owner/:repo"
             component={ScheduleRequestFormSuccess}
           />
           <Route exact path="/videocall/:roomName" component={VideoCall} />
