@@ -6,7 +6,6 @@ namespace GithubExperts.Api.Functions
     using System.Web.Http;
     using GithubExperts.Api.DataAccess;
     using GithubExperts.Api.Models;
-    using GithubExperts.Api.Util;
     using Microsoft.AspNetCore.Http;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Azure.Cosmos.Table;
@@ -32,16 +31,8 @@ namespace GithubExperts.Api.Functions
 
                 var yamlData = await GithubExpertsData.GetTutorYamlAsync(repo.Repository);
 
-                // Populate PartitionKey and RowKey
-                foreach (var item in yamlData.Experts)
-                {
-                    item.RowKey = item.Handle.ToLower();
-                    item.Repository = repo.Repository.ToLower();
-                    item.PartitionKey = repo.Repository.Replace("/", "+").ToLower();
-                }
+                await ExpertData.UpsertExpertsAsync(yamlData.Experts, repo.Repository);
 
-                await ExpertData.UpsertExpertsAsync(yamlData.Experts);
-                
                 return new OkResult();
             }
             catch (JsonSerializationException ex)

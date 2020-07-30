@@ -16,7 +16,7 @@ namespace GithubExperts.Api.Models
 
             set
             {
-                PartitionKey = value;
+                PartitionKey = value.Replace("/", "+").ToLower();
             }
         }
 
@@ -30,10 +30,9 @@ namespace GithubExperts.Api.Models
 
             set
             {
-                RowKey = value;
+                RowKey = value.ToLower();
             }
         }
-        
 
         [JsonPropertyName("timezone")]
         public string TimeZone { get; set; }
@@ -54,6 +53,6 @@ namespace GithubExperts.Api.Models
         public bool ExcludeWeekends { get; set; }
 
         [JsonPropertyName("email")]
-        public string Email {get; set; }
+        public string Email { get; set; }
     }
 }

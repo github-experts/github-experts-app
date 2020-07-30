@@ -20,9 +20,22 @@ namespace GithubExperts.Api.Functions
             string repo,
             ILogger log)
         {
+            GithubExperts yamlData = null;
+
             log.LogInformation("Experts(): Received request");
 
             var result = await ExpertData.GetExpertsAsync(repo);
+
+            // If no results, we might not have data for this repo yet...try and get it.
+            if (result.Count == 0)
+            {
+                yamlData = await GithubExpertsData.GetTutorYamlAsync(repo.Replace("+", "/"));
+                if (yamlData != null)
+                {
+                    await ExpertData.UpsertExpertsAsync(yamlData.Experts, repo);
+                    result = yamlData.Experts;
+                }
+            }
 
             return new OkObjectResult(result);
         }
