@@ -348,6 +348,10 @@
               "value": "[replace(replace(reference(concat('Microsoft.Storage/storageAccounts/', variables('frontendName'))).primaryEndpoints.web, 'https://', ''), '/', '')]"
             },
             {
+              "name": "BACKEND_HOSTNAME",
+              "value": "[concat(variables('backendName'), '.azurewebsites.net')]"
+            },
+            {
               "name": "COSMOS_DATABASE_NAME",
               "value": "[variables('databaseName')]"
             },
