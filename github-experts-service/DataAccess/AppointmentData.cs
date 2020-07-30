@@ -14,7 +14,7 @@ namespace GithubExperts.Api.DataAccess
         {
             Requested,
             Accepted,
-            Completed
+            Completed,
         }
 
         public static async Task<AppointmentEntity> GetAppointmentAsync(string repo, string id)
