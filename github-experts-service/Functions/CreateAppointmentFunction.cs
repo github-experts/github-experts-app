@@ -4,6 +4,7 @@ namespace GithubExperts.Api.Functions
     using System.IO;
     using System.Threading.Tasks;
     using System.Web.Http;
+    using GithubExperts.Api.DataAccess;
     using GithubExperts.Api.Models;
     using GithubExperts.Api.Util;
     using Microsoft.AspNetCore.Http;
@@ -33,8 +34,13 @@ namespace GithubExperts.Api.Functions
                 appointmentEntity.Status = "requested";
 
                 var table = CosmosTableUtil.GetTableReference("schedule");
-                var result = await table.ExecuteAsync(TableOperation.InsertOrMerge(appointmentEntity)); // TODO collisions should be rare given that the id is auto-genned, should we just go with Insert?
-                return new OkObjectResult(result.Result as AppointmentEntity);
+                var result = await table.ExecuteAsync(TableOperation.InsertOrMerge(appointmentEntity));
+
+                var appointment = result.Result as AppointmentEntity;
+                var expert = await ExpertData.GetExpertAsync(appointment.Expert);
+                await EmailUtil.SendEmailAsync(appointment, expert);
+
+                return new OkObjectResult(appointment);
             }
             catch (JsonSerializationException ex)
             {
