@@ -17,7 +17,7 @@ namespace GithubExperts.Api.Functions
         {
             log.LogInformation("CatGenerator(): Received request");
 
-            var result = CatNameGenerator.NewCat();
+            var result = await CatNameGenerator.NewCatAsync();
 
             return new OkObjectResult(result);
         }

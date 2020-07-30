@@ -32,7 +32,7 @@ namespace GithubExperts.Api.Functions
 
                 // Set status for new appointment request
                 appointmentEntity.Status = "requested";
-                appointmentEntity.RoomName = CatNameGenerator.NewCat();
+                appointmentEntity.RoomName = await CatNameGenerator.NewCatAsync();
 
                 var table = CosmosTableUtil.GetTableReference("schedule");
                 var result = await table.ExecuteAsync(TableOperation.InsertOrMerge(appointmentEntity));
