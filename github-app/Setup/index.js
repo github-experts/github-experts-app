@@ -17,7 +17,7 @@ touch with configured experts.`;
 
 module.exports = async function (context, request) {
 
-    context.log('JavaScript HTTP trigger function processed a request.');
+    context.log('Github webhook handler receiving incoming request...');
 
     if (request && request.body.installation.id && request.body.repositories.length > 0 && request.body.sender.login) {
 

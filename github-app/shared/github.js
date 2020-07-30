@@ -12,7 +12,6 @@ const auth = createAppAuth({
     privateKey: pem,
 });
 
-
 module.exports = {
     getIdentityRequestUrl: function (state, redirect_url) {
         return 'https://github.com/login/oauth/authorize' +
@@ -45,7 +44,6 @@ module.exports = {
     },
 
     getCurrentUser: async function (token) {
-
         const options = {
             url: `https://api.github.com/user?access_token=${token}`,
             method: 'GET',
