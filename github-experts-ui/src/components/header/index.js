@@ -26,8 +26,8 @@ export const Header = styled(({ className, headerOptions, pathState }) => {
       </div>
       <img
         className="avatar avatar-small mr-2"
-        alt="jonrohan"
-        src="https://github.com/jonrohan.png?v=3&s=40"
+        alt={user.login}
+        src={user.avatar_url}
         width="40"
         height="40"
       />

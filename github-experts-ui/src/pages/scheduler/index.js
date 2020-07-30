@@ -26,10 +26,7 @@ export const SchedulerPage = () => {
       // Need to get the repo name from somewhere else
       `/api/appointments/${params.expertName}?startdate=${
         getWeek().start
-      }&enddate=${getWeek().end}`,
-      {
-        method: 'GET',
-      }
+      }&enddate=${getWeek().end}`
     )
       .then((resp) => resp.json())
       .then((resp) => {
