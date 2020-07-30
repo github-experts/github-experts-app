@@ -50,7 +50,8 @@ module.exports = {
     },
 
     //Gets the current user account information.
-    getCurrentUser: function (token) {
+    getCurrentUser: async function (token) {
+
         const options = {
             url: `https://api.github.com/user?access_token=${token}`,
             method: 'GET',
@@ -65,23 +66,14 @@ module.exports = {
 
     //Encapsulates GitHub logic accessed via GitHub app.
     createApp: function () {
-        //Authenticates as the GitHub app by private key.
-        async function asApp() {
-            return await auth({ type: "auth" });
-        }
-
         // Authenticates as the given installation of the GitHub app, which gives us access to actions in user repo.
         async function asInstallation(installationId) {
             const response = await auth({
                 type: "installation",
                 installationId: installationId,
             });
-
-            const github = new Octokit({
-                type: "token",
-                token: response.token,
-                tokenType: "installation"
-            });
+            response.token = `token ${response.token}`;
+            const github = new Octokit(response);
             return github;
         }
 
@@ -113,19 +105,19 @@ module.exports = {
             }
         }
 
-        async function createBranch(owner, repo, installationId) {
+        async function createBranchFromMain(owner, repo, installationId, branchName) {
             const github = await asInstallation(installationId);
             const ref = "heads/master";
-            const branchers = await github.repos.listBranches({
-                owner,
-                repo
+            const branches = await github.repos.listBranches({
+                owner: owner,
+                repo: repo
             });
 
             console.log(github);
             const mainBranch = github.git.createRef({
                 owner: owner,
                 repo: repo,
-                ref: "github-experts-config",
+                ref: branchName,
                 sha: mainBranch.sha
             });
         }
@@ -143,6 +135,6 @@ module.exports = {
             return jwt.sign(payload, cert, { algorithm: 'RS256' });
         }
 
-        return { asApp, asInstallation, createToken, getConfig, gitConfigExists, createBranch };
+        return { asInstallation, createToken, getConfig, gitConfigExists, createBranchFromMain };
     }
 };

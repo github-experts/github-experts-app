@@ -1,5 +1,16 @@
 const githubRequests = require('../shared/github');
-const github_app = githubRequests.createApp();
+const githubApp = githubRequests.createApp();
+
+const PULL_REQUEST_HEAD = "github-experts-config";
+const PULL_REQUEST_BRANCH = "master";
+const PULL_REQUEST_TITLE = "Add Github Experts configuration";
+const PULL_REQUEST_BODY = `Github Experts connects developers with maintainers and other 
+subject matter experts to discuss anything related to the contents 
+of this repo.
+
+We've prepared a PR that will add an initial configuration file to your
+\`.github\` directory and a link to your README for developers to get in 
+touch with configured experts.`;
 
 module.exports = async function (context, request) {
 
@@ -12,9 +23,9 @@ module.exports = async function (context, request) {
         const owner = request.body.sender.login;
 
         for (i = 0; i < repositories.length; i++) {
-            const repo = repositories[i];
-            const repoName = repo.full_name;
-            const repoId = repo.id;
+            const repository = repositories[i];
+            const repo = repository.name;
+            const repoId = repository.id;
 
             try {
                 const configExists = false;// github_app.gitConfigExists(owner, repoName, installationId);
@@ -22,13 +33,22 @@ module.exports = async function (context, request) {
                 if (!configExists) {
 
                     // Create branch
-                    await github_app.createBranch(owner, repoName, installationId)
+                    await githubApp.createBranchFromMain(owner, repo, installationId, PULL_REQUEST_HEAD);
 
                     // Commit config file
+                    
 
                     // Commit a change to README
 
                     // Open PR
+                    octokit.pulls.create({
+                        owner,
+                        repo,
+                        title: PULL_REQUEST_TITLE,
+                        head: PULL_REQUEST_HEAD,
+                        base: PULL_REQUEST_BODY,
+                        body: PULL_REQUEST_BODY
+                      });
 
                     context.log(`Configuration created for: ${owner} (${installationId}) ${repoName}`);
                 } else {
