@@ -21,14 +21,18 @@ export const ScheduleRequestFormStart = () => (
   </Layout>
 );
 
-export const ScheduleRequestForm = () => (
-  <Layout headerOptions={[{ text: 'Schedule', path: '/scheduler' }]}>
-    <BoxPanel>
-      <BreadCrumbs breadCrumbPaths={['patniko', 'experts-demo', 'Requests']} />
-      <RequestForm />
-    </BoxPanel>
-  </Layout>
-);
+export const ScheduleRequestForm = () => {
+  return (
+    <Layout headerOptions={[{ text: 'Schedule', path: '/scheduler' }]}>
+      <BoxPanel>
+        <BreadCrumbs
+          breadCrumbPaths={['patniko', 'experts-demo', 'Requests']}
+        />
+        <RequestForm />
+      </BoxPanel>
+    </Layout>
+  );
+};
 
 export const ScheduleRequestFormSuccess = () => (
   <Layout headerOptions={[{ text: 'Schedule', path: '/scheduler' }]}>

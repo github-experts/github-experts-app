@@ -43,5 +43,15 @@ namespace GithubExperts.Api.DataAccess
 
             return result;
         }
+
+        public static async Task UpsertExpertsAsync(IEnumerable<ExpertEntity> experts)
+        {
+            var table = CosmosTableUtil.GetTableReference("experts");
+
+            foreach (var expert in experts)
+            {
+                var result = await table.ExecuteAsync(TableOperation.InsertOrMerge(expert));
+            }
+        }
     }
 }

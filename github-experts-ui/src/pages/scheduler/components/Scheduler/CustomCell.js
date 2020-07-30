@@ -38,7 +38,6 @@ export const CustomCellComponent = styled(({ className, data, color }) => {
     color: white;
   }
   .Popover {
-    z-index: 1030;
     &::hover {
       z-index: 10;
     }

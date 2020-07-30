@@ -7,33 +7,34 @@ import ChevronDown from 'assets/chevron-down.svg';
 
 import 'react-datepicker/dist/react-datepicker.css';
 
-export const CustomDatePicker = styled(({ className, selected, onChange }) => {
-  function handleDateChange(date) {
-    onChange(date);
+export const CustomDatePicker = styled(
+  ({ className, selected, onChange, excludeDates }) => {
+    function handleDateChange(date) {
+      onChange(date);
+    }
+
+    return (
+      <DatePicker
+        className={className}
+        calendarClassName={className}
+        popperClassName={className}
+        selected={selected}
+        onChange={handleDateChange}
+        excludeDates={excludeDates}
+        customInput={
+          <ToggleButton>
+            <div className="d-flex flex-items-center">
+              <img src={CalendarIcon} alt="" className="pr-2" />
+              Another Date
+              <img src={ChevronDown} alt="" className="pl-2" />
+            </div>
+          </ToggleButton>
+        }
+        minDate={new Date()}
+      />
+    );
   }
-
-  console.log(selected);
-
-  return (
-    <DatePicker
-      className={className}
-      calendarClassName={className}
-      popperClassName={className}
-      selected={selected}
-      onChange={handleDateChange}
-      customInput={
-        <ToggleButton>
-          <div className="d-flex flex-items-center">
-            <img src={CalendarIcon} alt="" className="pr-2" />
-            Another Date
-            <img src={ChevronDown} alt="" className="pl-2" />
-          </div>
-        </ToggleButton>
-      }
-      minDate={new Date()}
-    />
-  );
-})`
+)`
   &.react-datepicker {
     background: #ffffff;
     border: 1px solid #e1e4e8;

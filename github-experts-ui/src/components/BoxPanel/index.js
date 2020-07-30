@@ -10,6 +10,7 @@ export const BoxPanel = styled(({ className, children }) => {
   height: 80%;
   max-height: 600px;
   width: 80%;
+  margin-bottom: 9rem;
 
   ${media.lessThan('medium')`
     height: 100%;
