@@ -199,7 +199,9 @@ export const RequestFormStart = styled(({ className, children }) => {
               ),
               Expert: activeTutor ? activeTutor.name : null,
               Rate: activeTutor ? activeTutor.rate : null,
-              RequestFree: false,
+              RequestFree:
+                activeTutor &&
+                activeTutor.labels.includes('Open to donate time'),
               Requestor: REQUESTOR,
             },
           }}

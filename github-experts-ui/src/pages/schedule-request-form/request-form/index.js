@@ -20,6 +20,12 @@ export const RequestForm = styled(
     const [selectedRadioIndex, setselectedRadioIndex] = useState(0);
     const [, setError] = useState(undefined);
     const textAreaRef = useRef(null);
+    const paymentOptions = [
+      `I will pay $${location.state.Rate} for this 30-minute session`,
+    ];
+    if (get(location, 'state.RequestFree', false)) {
+      paymentOptions.push('I hope to request a free session');
+    }
 
     const createAppt = useCallback((payload) => {
       return request('appointment', {
@@ -38,7 +44,7 @@ export const RequestForm = styled(
           <div className="flash pills d-flex">
             <div className="column-info d-flex">
               {[
-                { label: 'Tutor', text: 'patniko' },
+                { label: 'Tutor', text: location.state.Expert },
                 {
                   label: 'Date',
                   text: formatDateTime(
@@ -81,10 +87,7 @@ export const RequestForm = styled(
                 id="textarea"
               ></textarea>
               <div className="radio-checkboxes d-flex flex-column pt-2">
-                {[
-                  'I will pay $50 for this 30-minute session',
-                  'I hope to request a free session',
-                ].map((item, i) => (
+                {paymentOptions.map((item, i) => (
                   <label className="d-flex flex-items-center">
                     <input
                       type="radio"
@@ -107,14 +110,12 @@ export const RequestForm = styled(
             onClick={() => {
               const payload = {
                 DateTime: get(location, 'state.DateTime'),
-                // Need to get this from somewhere else.
-                Requestor: 'steverhall',
+                Requestor: location.state.Requestor,
                 Status: 'requested',
                 Details: textAreaRef.current.value,
                 Rate: get(location, 'state.Rate'),
                 RequestFree: selectedRadioIndex === 1 ? true : false,
-                // Need to get this from somewhere else.
-                Expert: 'patniko',
+                Expert: location.state.Expert,
                 // Need to get this from somewhere else.
                 Repo: 'github-experts+github-experts-sample-repo',
               };

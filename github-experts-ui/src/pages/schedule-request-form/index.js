@@ -21,8 +21,7 @@ export const ScheduleRequestFormStart = () => (
   </Layout>
 );
 
-export const ScheduleRequestForm = ({ location }) => {
-  console.log('State Props!', location.state);
+export const ScheduleRequestForm = () => {
   return (
     <Layout headerOptions={[{ text: 'Schedule', path: '/scheduler' }]}>
       <BoxPanel>
