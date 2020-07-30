@@ -41,7 +41,6 @@ namespace GithubExperts.Api.DataAccess
             if (json?.Contains(repo) == true)
             {
                 repoData = GitHubRepoSettingsEntity.FromJson(json);
-                //repoData = JsonConvert.DeserializeObject<GitHubRepoSettingsEntity>(json);
             }
 
             return repoData;
