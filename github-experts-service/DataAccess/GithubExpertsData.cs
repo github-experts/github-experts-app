@@ -17,7 +17,8 @@ namespace GithubExperts.Api.DataAccess
         {
             // Retrieve YAML file from GitHub repo
             var repoData = await GetRepoSettingsAsync(repo);
-            string url = string.Format("https://raw.githubusercontent.com/{0}/{1}/.github/tutors.yml", repo, repoData.DefaultBranch);
+            string url = string.Format("https://raw.githubusercontent.com/{0}/{1}/.github/github-experts.yml", repo, repoData.DefaultBranch);
+            //client.DefaultRequestHeaders.UserAgent.ParseAdd("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15");
 
             var response = await client.GetStringAsync(new Uri(url));
 
@@ -25,6 +26,7 @@ namespace GithubExperts.Api.DataAccess
             var deserializer = new DeserializerBuilder()
                 .WithNamingConvention(CamelCaseNamingConvention.Instance)
                 .Build();
+
             var experts = deserializer.Deserialize<GithubExperts>(response);
 
             return experts;
