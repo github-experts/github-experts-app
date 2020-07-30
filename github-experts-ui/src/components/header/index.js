@@ -4,7 +4,7 @@ import GithubLogo from 'assets/github-logo.svg';
 import ExpertsLogo from 'assets/Experts.svg';
 import { StyledLink } from 'components/StyledLink';
 
-export const Header = styled(({ className, headerOptions }) => {
+export const Header = styled(({ className, headerOptions, pathState }) => {
   return (
     <header className={`${className} d-flex Header`}>
       <div className="nav d-flex flex-items-center flex-1">
@@ -13,7 +13,13 @@ export const Header = styled(({ className, headerOptions }) => {
           <img className="experts-logo" src={ExpertsLogo} alt="" />
         </div>
         {headerOptions.map((item, i) => (
-          <StyledLink key={i} to={item.path}>
+          <StyledLink
+            key={i}
+            to={{
+              pathname: item.path,
+              state: pathState,
+            }}
+          >
             <p className="nav-items Header-item">{item.text}</p>
           </StyledLink>
         ))}

@@ -23,7 +23,7 @@ export const BreadCrumbs = styled(({ className, breadCrumbPaths }) => {
           className="breadcrumb-item breadcrumb-item-selected text-medium text-gray"
           aria-current="page"
         >
-          {breadCrumbPaths.slice(-1)[0]}
+          &nbsp;{breadCrumbPaths.slice(-1)[0]}
         </li>
       </ol>
     </nav>

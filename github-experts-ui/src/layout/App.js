@@ -41,7 +41,11 @@ export default function App() {
     <Router basename={process.env.REACT_APP_ROUTE_PREFIX}>
       <Suspense fallback={<Loading />}>
         <Switch>
-          <Route exact path="/scheduler" component={SchedulerPage} />
+          <Route
+            exact
+            path="/scheduler/:expertName"
+            component={SchedulerPage}
+          />
           <Route exact path="/schedule-summary" component={ScheduleSummary} />
           <Route
             exact
