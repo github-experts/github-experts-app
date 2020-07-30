@@ -4,6 +4,7 @@ namespace GithubExperts.Api.Functions
     using System.Collections.Generic;
     using System.Linq;
     using System.Threading.Tasks;
+    using System.Web.Http;
     using GithubExperts.Api.DataAccess;
     using GithubExperts.Api.Models;
     using Microsoft.AspNetCore.Http;
@@ -11,6 +12,7 @@ namespace GithubExperts.Api.Functions
     using Microsoft.Azure.WebJobs;
     using Microsoft.Azure.WebJobs.Extensions.Http;
     using Microsoft.Extensions.Logging;
+
 
     public static class Experts
     {
@@ -29,11 +31,19 @@ namespace GithubExperts.Api.Functions
             // If no results, we might not have data for this repo yet...try and get it.
             if (result.Count == 0)
             {
-                yamlData = await GithubExpertsData.GetTutorYamlAsync(repo.Replace("+", "/"));
-                if (yamlData != null)
+                try
                 {
-                    await ExpertData.UpsertExpertsAsync(yamlData.Experts, repo);
-                    result = yamlData.Experts;
+                    yamlData = await GithubExpertsData.GetTutorYamlAsync(repo.Replace("+", "/"));
+                    if (yamlData != null)
+                    {
+                        await ExpertData.UpsertExpertsAsync(yamlData.Experts, repo);
+                        result = yamlData.Experts;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    log.LogError(string.Format("Experts(): Exception occurred {0}:{1}", ex.Message, ex.InnerException));
+                    return new InternalServerErrorResult();
                 }
             }
 

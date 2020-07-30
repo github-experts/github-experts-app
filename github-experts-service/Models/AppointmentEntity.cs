@@ -39,6 +39,9 @@ namespace GithubExperts.Api.Models
         [JsonPropertyName("expert")]
         public string Expert { get; set; }
 
+        [JsonPropertyName("roomname")]
+        public string RoomName { get; set; }
+
         [JsonPropertyName("repo")]
         public string Repo
         {
