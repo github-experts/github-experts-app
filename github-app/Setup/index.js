@@ -7,14 +7,6 @@ README_PATH = "/README.md";
 
 const PULL_REQUEST_HEAD = "bot-github-experts";
 const PULL_REQUEST_BRANCH = "master";
-const PULL_REQUEST_TITLE = "Add Github Experts configuration";
-const PULL_REQUEST_BODY = `Github Experts connects developers with maintainers and other 
-subject matter experts to discuss anything related to the contents 
-of this repo.
-
-We've prepared a PR that will add an initial configuration file to your
-\`.github\` directory and a link to your README for developers to get in 
-touch with configured experts.`;
 
 module.exports = async function (context, request) {
 
@@ -29,35 +21,48 @@ module.exports = async function (context, request) {
         for (i = 0; i < repositories.length; i++) {
             const repository = repositories[i];
             const repo = repository.name;
-            const repoId = repository.id;
 
             try {
                 const configExists = await githubApp.gitConfigExists(owner, repo, installationId, CONFIG_PATH, PULL_REQUEST_BRANCH);
 
                 if (!configExists) {
-
-                    // Create branch
-                    const branch = await githubApp.createBranch(owner, repo, installationId, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH);
-
-                    // Commit config file
+                    let branch = await githubApp.createBranch(owner, repo, installationId, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH);
                     const githubExpertsConfigExists = await githubApp.gitConfigExists(owner, repo, installationId, CONFIG_PATH, PULL_REQUEST_HEAD);
                     if(!githubExpertsConfigExists) {
                         const config = yamlConfig.generate(owner);
-                        const configCommit = await githubApp.createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.commit.sha, CONFIG_PATH, "Yaml for Github Experts configuration", config);
-                    }
-                    /*const readmeExists = await githubApp.gitConfigExists(owner, repo, installationId, "/README.md", PULL_REQUEST_HEAD);
-                    if(!readmeExists) {
-                        const readmeCommit = await githubApp.createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.commit.sha, README_PATH, "Add Github Experts link to README", `link: ${owner}`);
+                        const configCommit = await githubApp.createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.object.sha, CONFIG_PATH, "Yaml for Github Experts configuration", config);
+
+                        if(configCommit) {
+                            // Uncomment to modify the README directly
+                            //branch = await githubApp.createBranch(owner, repo, installationId, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH);
+                            //const readmeCommit = await githubApp.createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.commit.sha, README_PATH, "Add Github Experts link to README", `link: ${owner}`);
+
+                            const PULL_REQUEST_TITLE = "Add Github Experts configuration";
+                            const PULL_REQUEST_BODY = `Github Experts connects developers with maintainers and other 
+                            subject matter experts to discuss anything related to the contents 
+                            of this repo.
+
+                            We've prepared a PR that will add an initial configuration file to your
+                            \`.github\` directory and a link to your README for developers to get in 
+                            touch with configured experts.
+                            
+                            When you're ready to accept requests from Github developers just add this 
+                            link to your README for everyone to see:
+                            \`\`\`
+                            <a href="https://githubexpertsapi.azurewebsites.net/.auth/login/aad?post_login_redirect_uri=%2Fsite%2Fschedule">
+                                <img src="" />
+                            </a>
+                            \`\`\`
+                            `;
+
+                            const pr = await githubApp.createPullRequest(owner, repo, installationId, PULL_REQUEST_TITLE, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH, PULL_REQUEST_BODY);
+                            context.log(`Configuration created for: ${owner} (${installationId}) ${repo}`);
+                        }
                     } else {
-                        const readmeCommit = await githubApp.createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.commit.sha, README_PATH, "Add Github Experts link to README", `link: ${owner}`);
-                    }*/
-
-                    // Open PR
-                    const pr = await githubApp.createPullRequest(owner, repo, installationId, PULL_REQUEST_TITLE, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH, PULL_REQUEST_BODY);
-
-                    context.log(`Configuration created for: ${owner} (${installationId}) ${repoName}`);
+                        context.log(`Configuration already exists for: ${owner} (${installationId}) ${repo}`);
+                    }
                 } else {
-                    context.log(`Configuration already exists for: ${owner} (${installationId}) ${repoName}`);
+                    context.log(`Configuration already exists for: ${owner} (${installationId}) ${repo}`);
                 }
             } catch (error) {
                 context.log(error);
