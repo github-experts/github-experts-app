@@ -28,7 +28,7 @@ export const RequestForm = styled(
     }
 
     const createAppt = useCallback((payload) => {
-      return request('appointment', {
+      return request('/api/appointment', {
         method: 'POST',
         body: JSON.stringify(payload),
       })
