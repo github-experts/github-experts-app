@@ -52,5 +52,8 @@ namespace GithubExperts.Api.Models
 
         [JsonPropertyName("excludeweekends")]
         public bool ExcludeWeekends { get; set; }
+
+        [JsonPropertyName("email")]
+        public string Email {get; set; }
     }
 }
