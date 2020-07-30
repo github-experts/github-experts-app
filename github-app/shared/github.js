@@ -14,6 +14,12 @@ const auth = createAppAuth({
     clientId: githubClientId,
     clientSecret: githubClientSecret,
 });
+console.log({
+    id: githubAppId,
+    privateKey: pem,
+    clientId: githubClientId,
+    clientSecret: githubClientSecret,
+})
 
 module.exports = {
     createApp: function () {
