@@ -10,6 +10,10 @@ $resourceGroup = $env:APP_GROUP
 $appName = $env:APP_NAME
 $sendgridAPIKey = $env:SENDGRID_API_KEY
 $sendGridPassword = $env:SENDGRID_PASSWORD
+$githubAppFunctionName = $env:GITHUB_APP_NAME
+$githubAppId = $env:GITHUB_APP_ID
+$githubAppClientId = $env:GITHUB_CLIENT_ID
+$githubAppClientSecret = $env:GITHUB_CLIENT_SECRET
 
 #region Resources
 
@@ -22,7 +26,7 @@ az login `
 $deployment = az deployment group create `
   --resource-group $resourceGroup `
   --template-file $projectRoot/azuredeploy.json `
-  --parameters appName=$appName b2cClientId=$b2cClientId b2cTenantName=$b2cTenantName sendgridPassword=$sendGridPassword sendgridApiKey=$sendgridAPIKey `
+  --parameters appName=$appName b2cClientId=$b2cClientId b2cTenantName=$b2cTenantName sendgridPassword=$sendGridPassword sendgridApiKey=$sendgridAPIKey GITHUB_APP_ID=$githubAppId GITHUB_CLIENT_ID=$githubAppClientId GITHUB_CLIENT_SECRET=$githubAppClientSecret `
   --output json `
 | ConvertFrom-Json
 
@@ -84,6 +88,28 @@ az storage blob upload-batch `
 
 Pop-Location
 
+#endregion
+
+#region Github-app
+
+Push-Location $projectRoot/github-app
+
+if (!(Test-Path ./node_modules -PathType Container))
+{
+  npm install
+}
+
+Compress-Archive `
+  -Path ./* `
+  -DestinationPath ./zipdeploy.zip `
+  -Force
+
+az functionapp deployment source config-zip `
+  --resource-group $resourceGroup `
+  --name $githubAppFunctionName `
+  --src ./zipdeploy.zip
+
+Pop-Location
 #endregion
 
 Write-Output '===================================================='
