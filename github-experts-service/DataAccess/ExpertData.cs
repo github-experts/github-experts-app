@@ -17,6 +17,19 @@ namespace GithubExperts.Api.DataAccess
             return await GetExpertsAsync(query);
         }
 
+        public static async Task UpsertExpertsAsync(IEnumerable<ExpertEntity> experts, string repo)
+            {
+                var table = CosmosTableUtil.GetTableReference("experts");
+
+                foreach (var item in experts)
+                {
+                    item.RowKey = item.Handle;
+                    item.Repository = repo;
+                    item.PartitionKey = repo;
+                    var result = await table.ExecuteAsync(TableOperation.InsertOrMerge(item));
+                }
+            }
+
         public static async Task<ExpertEntity> GetExpertAsync(string handle)
         {
             TableQuery<ExpertEntity> query = new TableQuery<ExpertEntity>()
@@ -42,16 +55,6 @@ namespace GithubExperts.Api.DataAccess
             while (continuationToken != null);
 
             return result;
-        }
-
-        public static async Task UpsertExpertsAsync(IEnumerable<ExpertEntity> experts)
-        {
-            var table = CosmosTableUtil.GetTableReference("experts");
-
-            foreach (var expert in experts)
-            {
-                var result = await table.ExecuteAsync(TableOperation.InsertOrMerge(expert));
-            }
         }
     }
 }

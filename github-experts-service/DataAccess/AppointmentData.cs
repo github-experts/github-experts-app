@@ -49,17 +49,17 @@ namespace GithubExperts.Api.DataAccess
         {
             string appointmentStatus = "requested";
 
-            switch(status)
+            switch (status)
             {
                 case AppointmentStatus.Requested:
                     appointmentStatus = "requested";
-                break;
+                    break;
                 case AppointmentStatus.Accepted:
                     appointmentStatus = "accepted";
-                break;
+                    break;
                 case AppointmentStatus.Completed:
                     appointmentStatus = "completed";
-                break;
+                    break;
             }
 
             TableQuery<AppointmentEntity> query = new TableQuery<AppointmentEntity>()
