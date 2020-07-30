@@ -13,7 +13,7 @@ export const GetExperts = (repo) => {
     return labels;
   };
 
-  return request(`experts/${repo}`, {})
+  return request(`/api/experts/${repo}`, {})
     .then((response) => response.json())
     .then((data) => {
       return data.map((d) => {
@@ -32,7 +32,7 @@ export const GetMonthlyAvailability = (repo, expertHandle, timezone) => {
   timezone = timezone ?? 'PST';
 
   return request(
-    `monthlyavailability/${repo}/${expertHandle}?tz=${timezone}`,
+    `/api/monthlyavailability/${repo}/${expertHandle}?tz=${timezone}`,
     {}
   )
     .then((response) => response.json())
@@ -52,7 +52,7 @@ export const GetDailyAvailability = (repo, expertHandle, date, timezone) => {
   let endDate = moment(date).add(1, 'day').format('YYYY-MM-DD');
 
   return request(
-    `dailyavailability/${repo}/${expertHandle}?startDate=${startDate}&endDate=${endDate}&tz=${tzEncoded}`,
+    `/api/dailyavailability/${repo}/${expertHandle}?startDate=${startDate}&endDate=${endDate}&tz=${tzEncoded}`,
     {}
   )
     .then((response) => response.json())

@@ -4,7 +4,7 @@ import request from 'utils/request';
 import Loading from 'layout/Loading';
 
 function sessionDone(roomName, durationInMinutes) {
-  request(`/Appointment/${roomName}`, {
+  request(`/api/Appointment/${roomName}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',

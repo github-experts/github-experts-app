@@ -24,9 +24,9 @@ export const SchedulerPage = () => {
   useEffect(() => {
     request(
       // Need to get the repo name from somewhere else
-      `appointments/${params.expertName}?startdate=${getWeek().start}&enddate=${
-        getWeek().end
-      }`,
+      `/api/appointments/${params.expertName}?startdate=${
+        getWeek().start
+      }&enddate=${getWeek().end}`,
       {
         method: 'GET',
       }
