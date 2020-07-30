@@ -59,14 +59,17 @@ function Table({ columns, data }) {
 export function SummaryTable() {
   const appointments = useSelector(getSchedule);
   const params = useParams();
-  const updateAppt = useCallback((status, id) => {
-    return request(`api/appointment/${params.repo}/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({
-        status: status,
-      }),
-    });
-  }, []);
+  const updateAppt = useCallback(
+    (status, id) => {
+      return request(`api/appointment/${params.repo}/${id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          status: status,
+        }),
+      });
+    },
+    [params.repo]
+  );
 
   const columns = React.useMemo(
     () => [
@@ -118,7 +121,7 @@ export function SummaryTable() {
         ),
       },
     ],
-    []
+    [updateAppt]
   );
 
   return (
