@@ -154,7 +154,17 @@ export const RequestFormStart = styled(({ className, children }) => {
         </div>
       </div>
       <footer className="d-flex flex-justify-end flex-items-center pr-4">
-        <Link to="/schedule-request-form">
+        <Link
+          to={{
+            pathname: '/schedule-request-form',
+            state: {
+              // Dyanmic values filled in from the UI options
+              DateTime: 'Wed Jul 29 2020 19:35:13 GMT',
+              Rate: '50',
+              RequestFree: false,
+            },
+          }}
+        >
           <button className="btn btn-outline mr-2" type="button">
             <span>Next Step</span>
           </button>
