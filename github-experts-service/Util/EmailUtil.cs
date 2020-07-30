@@ -28,7 +28,7 @@
             {
                 template = "request";
                 toAddr = expert.Email;
-                link = $"https://{Environment.GetEnvironmentVariable("BACKEND_HOSTNAME")}/site/scheduler/{expert.Handle}";
+                link = $"https://{Environment.GetEnvironmentVariable("BACKEND_HOSTNAME")}/site/scheduler/{expert.Handle}/{appointment.Repo}";
             }
             else if (appointment.Status == "accepted")
             {
