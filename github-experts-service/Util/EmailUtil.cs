@@ -39,7 +39,7 @@
             var placeholders = new Dictionary<string, string>();
             placeholders.Add("name", appointment.Requestor);
             placeholders.Add("date", appointment.DateTime.ToString("dddd, MMMM dd yyyy"));
-            placeholders.Add("time", appointment.DateTime.ToString("HH:mm tt"));
+            placeholders.Add("time", appointment.DateTime.ToString("h:mm tt"));
             placeholders.Add("repo name here", appointment.Repo);
             return new EmailMessage
             {
