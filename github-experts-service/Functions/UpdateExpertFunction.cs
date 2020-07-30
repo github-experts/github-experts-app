@@ -15,41 +15,48 @@ namespace GithubExperts.Api.Functions
     using Microsoft.Extensions.Logging;
     using Newtonsoft.Json;
 
-    public static class UpdateExpertFunction
+    public static class RefreshFromGithubYamlFunction
     {
-        [FunctionName("UpdateExpert")]
+        [FunctionName("RefreshFromGithubYaml")]
         public static async Task<IActionResult> Run(
-            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "updateexpert")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "refreshfromgithubyaml")] HttpRequest req,
             ILogger log)
         {
-            log.LogInformation("UpdateExpert(): Received request");
+            log.LogInformation("RefreshFromGithubYaml(): Received request");
 
             using StreamReader reader = new StreamReader(req.Body);
             try
             {
                 string requestBody = reader.ReadToEnd();
-                ExpertEntity expert = JsonConvert.DeserializeObject<ExpertEntity>(requestBody);
+                var repo = JsonConvert.DeserializeObject<RepositoryEntity>(requestBody);
 
-                var data = await GithubTutorsData.GetAppointmentAsync("github-experts/github-experts-sample-repo");
+                var yamlData = await GithubExpertsData.GetTutorYamlAsync(repo.Repository);
 
-                // var table = CosmosTableUtil.GetTableReference("expert");
-                // var result = await table.ExecuteAsync(TableOperation.InsertOrMerge(expert));
-                // return new OkObjectResult(result.Result as ExpertEntity);
+                // Populate PartitionKey and RowKey
+                foreach (var item in yamlData.Experts)
+                {
+                    item.RowKey = item.Handle.ToLower();
+                    item.Repository = repo.Repository.ToLower();
+                    item.PartitionKey = repo.Repository.Replace("/", "+").ToLower();
+                }
+
+                await ExpertData.UpsertExpertsAsync(yamlData.Experts);
+                
                 return new OkResult();
             }
             catch (JsonSerializationException ex)
             {
-                log.LogError(string.Format("CreateAppointment(): JsonSerializationException occurred {0}:{1}", ex.Message, ex.InnerException));
+                log.LogError(string.Format("RefreshFromGithubYaml(): JsonSerializationException occurred {0}:{1}", ex.Message, ex.InnerException));
                 return new BadRequestObjectResult(ex.Message);
             }
             catch (StorageException ex)
             {
-                log.LogError(string.Format("CreateAppointment(): StorageException occurred {0}:{1}", ex.Message, ex.InnerException));
+                log.LogError(string.Format("RefreshFromGithubYaml(): StorageException occurred {0}:{1}", ex.Message, ex.InnerException));
                 return new BadRequestObjectResult(ex.Message);
             }
             catch (Exception ex)
             {
-                log.LogError(string.Format("CreateAppointment(): Exception occurred {0}:{1}", ex.Message, ex.InnerException));
+                log.LogError(string.Format("RefreshFromGithubYaml(): Exception occurred {0}:{1}", ex.Message, ex.InnerException));
                 return new InternalServerErrorResult();
             }
         }

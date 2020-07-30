@@ -10,6 +10,13 @@ namespace GithubExperts.Api.DataAccess
 
     public static class AppointmentData
     {
+        public enum AppointmentStatus
+        {
+            Requested,
+            Accepted,
+            Completed
+        }
+
         public static async Task<AppointmentEntity> GetAppointmentAsync(string repo, string id)
         {
             TableQuery<AppointmentEntity> query = new TableQuery<AppointmentEntity>()
@@ -30,6 +37,37 @@ namespace GithubExperts.Api.DataAccess
                         TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, repo),
                         TableOperators.And,
                         TableQuery.GenerateFilterCondition("Expert", QueryComparisons.Equal, handle)),
+                    TableOperators.And,
+                    TableQuery.CombineFilters(
+                        TableQuery.GenerateFilterConditionForDate("DateTime", QueryComparisons.GreaterThanOrEqual, startDate),
+                        TableOperators.And,
+                        TableQuery.GenerateFilterConditionForDate("DateTime", QueryComparisons.LessThanOrEqual, endDate))));
+            return await GetAppointmentsAsync(query);
+        }
+
+        public static async Task<IList<AppointmentEntity>> GetAppointmentsAsync(string handle, AppointmentStatus status, DateTime startDate, DateTime endDate)
+        {
+            string appointmentStatus = "requested";
+
+            switch(status)
+            {
+                case AppointmentStatus.Requested:
+                    appointmentStatus = "requested";
+                break;
+                case AppointmentStatus.Accepted:
+                    appointmentStatus = "accepted";
+                break;
+                case AppointmentStatus.Completed:
+                    appointmentStatus = "completed";
+                break;
+            }
+
+            TableQuery<AppointmentEntity> query = new TableQuery<AppointmentEntity>()
+                .Where(TableQuery.CombineFilters(
+                    TableQuery.CombineFilters(
+                        TableQuery.GenerateFilterCondition("Expert", QueryComparisons.Equal, handle),
+                        TableOperators.And,
+                        TableQuery.GenerateFilterCondition("Status", QueryComparisons.Equal, appointmentStatus)),
                     TableOperators.And,
                     TableQuery.CombineFilters(
                         TableQuery.GenerateFilterConditionForDate("DateTime", QueryComparisons.GreaterThanOrEqual, startDate),
