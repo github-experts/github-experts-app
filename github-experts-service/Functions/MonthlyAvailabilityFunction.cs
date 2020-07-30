@@ -57,35 +57,32 @@ namespace GithubExperts.Api.Functions
 
             var availabilityByDay = new List<AvailabilityEntity>((int)(endDate - startDate).TotalDays);
 
-            if (result.Any())
+            // Compute number of 30 minute time slots for this expert
+            var totalSlotsForExpert = (expert.EndTime.TimeOfDay - expert.StartTime.TimeOfDay).TotalHours / 30;
+            var dayLoop = startDate;
+
+            while (dayLoop <= endDate)
             {
-                // Compute number of 30 minute time slots for this expert
-                var totalSlotsForExpert = (expert.EndTime.TimeOfDay - expert.StartTime.TimeOfDay).TotalHours / 30;
-                var dayLoop = startDate;
+                bool hasAvailability = false;
 
-                while (dayLoop <= endDate)
+                // Check if day is a "working" day
+                if (expert.ExcludeWeekends == false ||
+                    (dayLoop.DayOfWeek != DayOfWeek.Saturday && dayLoop.DayOfWeek != DayOfWeek.Sunday))
                 {
-                    bool hasAvailability = false;
+                    // Look how many time slots were filled and compare against total slots
+                    var numAppointments = result.Count(x => x.DateTime.Date == dayLoop.Date);
 
-                    // Check if day is a "working" day
-                    if (expert.ExcludeWeekends == false ||
-                        (dayLoop.DayOfWeek != DayOfWeek.Saturday && dayLoop.DayOfWeek != DayOfWeek.Sunday))
-                    {
-                        // Look how many time slots were filled and compare against total slots
-                        var numAppointments = result.Count(x => x.DateTime.Date == dayLoop.Date);
-
-                        hasAvailability = numAppointments < totalSlotsForExpert;
-                    }
-
-                    availabilityByDay.Add(new AvailabilityEntity
-                        {
-                            StartDate = dayLoop,
-                            EndDate = dayLoop,
-                            Available = hasAvailability,
-                        });
-
-                    dayLoop = dayLoop.AddDays(1);
+                    hasAvailability = numAppointments < totalSlotsForExpert;
                 }
+
+                availabilityByDay.Add(new AvailabilityEntity
+                    {
+                        StartDate = dayLoop,
+                        EndDate = dayLoop,
+                        Available = hasAvailability,
+                    });
+
+                dayLoop = dayLoop.AddDays(1);
             }
 
             log.LogInformation("here");

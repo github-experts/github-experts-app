@@ -59,41 +59,38 @@ namespace GithubExperts.Api.Functions
 
             var availableTimeslots = new List<AvailabilityEntity>();
 
-            if (result.Any())
+            var dayLoop = startDate;
+            while (dayLoop <= endDate)
             {
-                var dayLoop = startDate;
-                while (dayLoop <= endDate)
+                if (expert.ExcludeWeekends == true &&
+                    (dayLoop.DayOfWeek == DayOfWeek.Saturday || dayLoop.DayOfWeek == DayOfWeek.Sunday))
                 {
-                    if (expert.ExcludeWeekends == true &&
-                        (dayLoop.DayOfWeek == DayOfWeek.Saturday || dayLoop.DayOfWeek == DayOfWeek.Sunday))
-                    {
-                        dayLoop = dayLoop.AddDays(1);
-                        continue;
-                    }
-
-                    // Build slots for this day and mark as available or filled
-                    var timeSlotLoop = expert.StartTime.TimeOfDay;
-                    while (timeSlotLoop <= expert.EndTime.TimeOfDay)
-                    {
-                        var starttime = new DateTime(dayLoop.Year, dayLoop.Month, dayLoop.Day, timeSlotLoop.Hours, timeSlotLoop.Minutes, timeSlotLoop.Seconds);
-                        var appointment = result.Where(x => x.DateTime.Date == dayLoop.Date && x.DateTime.TimeOfDay == timeSlotLoop).FirstOrDefault();
-
-                        var availability = new AvailabilityEntity
-                        {
-                            StartDate = starttime,
-                            EndDate = starttime.AddMinutes(30),
-                        };
-
-                        availability.Available = appointment == null;
-
-                        availableTimeslots.Add(availability);
-
-                        // increment by 30 minutes
-                        timeSlotLoop = timeSlotLoop.Add(new TimeSpan(0, 30, 0));
-                    }
-
                     dayLoop = dayLoop.AddDays(1);
+                    continue;
                 }
+
+                // Build slots for this day and mark as available or filled
+                var timeSlotLoop = expert.StartTime.TimeOfDay;
+                while (timeSlotLoop <= expert.EndTime.TimeOfDay)
+                {
+                    var starttime = new DateTime(dayLoop.Year, dayLoop.Month, dayLoop.Day, timeSlotLoop.Hours, timeSlotLoop.Minutes, timeSlotLoop.Seconds);
+                    var appointment = result.Where(x => x.DateTime.Date == dayLoop.Date && x.DateTime.TimeOfDay == timeSlotLoop).FirstOrDefault();
+
+                    var availability = new AvailabilityEntity
+                    {
+                        StartDate = starttime,
+                        EndDate = starttime.AddMinutes(30),
+                    };
+
+                    availability.Available = appointment == null;
+
+                    availableTimeslots.Add(availability);
+
+                    // increment by 30 minutes
+                    timeSlotLoop = timeSlotLoop.Add(new TimeSpan(0, 30, 0));
+                }
+
+                dayLoop = dayLoop.AddDays(1);
             }
 
             return new OkObjectResult(availableTimeslots);
