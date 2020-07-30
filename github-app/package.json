@@ -10,6 +10,8 @@
     "@octokit/auth-app": "^2.4.10",
     "@octokit/rest": "^18.0.3",
     "install": "^0.13.0",
+    "js-base64": "^3.3.3",
+    "json2yaml": "^1.1.0",
     "jsonwebtoken": "^8.5.1",
     "request": "^2.88.2",
     "request-promise": "^4.2.6"

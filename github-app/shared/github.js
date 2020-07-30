@@ -4,12 +4,17 @@ const path = require('path');
 const fs = require('fs');
 const { createAppAuth } = require("@octokit/auth-app");
 const { Octokit } = require("@octokit/rest");
+const { Base64 } = require("js-base64")
 
 const githubAppId = process.env['GITHUB_APP_ID'];
+const githubClientId = process.env['GITHUB_CLIENT_ID'];
+const githubClientSecret = process.env['GITHUB_CLIENT_SECRET'];
 const pem = fs.readFileSync(path.resolve(__dirname, './private-key.pem'));
 const auth = createAppAuth({
     id: githubAppId,
     privateKey: pem,
+    clientId: githubClientId,
+    clientSecret: githubClientSecret,
 });
 
 module.exports = {
@@ -62,14 +67,14 @@ module.exports = {
                 type: "installation",
                 installationId: installationId,
             });
-            response.token = `token ${response.token}`;
+            //response.token = `token ${response.token}`;
             const github = new Octokit(response);
             return github;
         }
 
         async function getConfig(username, repo, installationId) {
             const github = await asInstallation(installationId);
-            const content = github.repos.getContent({ owner: username, repo: repo, path: '/README.md' });
+            const content = await github.repos.getContent({ owner: username, repo: repo, path: '/.github/github-experts.yml' });
             return content;
         }
 
@@ -84,7 +89,11 @@ module.exports = {
                 }
 
             } catch (error) {
-                Promise.reject(error);
+                if (error && error.message && error.message === "Not Found") {
+                    return false;
+                } else {
+                    Promise.reject(error);
+                }
             }
         }
 
@@ -94,17 +103,19 @@ module.exports = {
                 owner: owner,
                 repo: repo
             });
-            const mainBranch = branches.filter(i => i.name == mainBranchName);
-            const existingConfigBranch = branches.reduce((a, v) => !a && v.name == configBranchName, false);
-            if (main.length > 0 && !existingConfigBranch) {
-                const sha = main[0].commit.sha;
-                const newBranch = github.git.createRef({
+            const mainBranch = branches.data.filter(i => i.name == mainBranchName);
+            const existingConfigBranch = branches.data.filter(i => i.name == configBranchName);
+            if (mainBranch.length > 0 && existingConfigBranch.length == 0) {
+                const sha = mainBranch[0].commit.sha;
+                const newBranch = await github.git.createRef({
                     owner: owner,
                     repo: repo,
-                    ref: branchName,
-                    sha: mainBranch.sha
+                    ref: `refs/heads/${configBranchName}`,
+                    sha: sha
                 });
                 return newBranch;
+            } else if (existingConfigBranch.length > 0) {
+                return existingConfigBranch[0];
             } else {
                 return undefined;
             }
@@ -112,7 +123,8 @@ module.exports = {
 
         async function createCommit(owner, repo, installationId, branch, sha, path, message, content) {
             const github = await asInstallation(installationId);
-            await github.repos.createOrUpdateFile({
+            const encodedContent = Base64.encode(content);
+            const commit = await github.repos.createOrUpdateFileContents({
                 owner,
                 repo,
                 branch,
@@ -120,11 +132,29 @@ module.exports = {
                 path,
                 message,
                 content,
-                committer.name: "Github Experts Bot",
-                committer.email: "githubexperts@microsoft.com",
-                author.name: "Github Experts Bot",
-                author.email: "githubexperts@microsoft.com"
+                committer: {
+                    name: "Github Experts Bot",
+                    email: "githubexperts@microsoft.com",
+                },
+                author: {
+                    name: "Github Experts Bot",
+                    email: "githubexperts@microsoft.com",
+                }
             });
+            return commit;
+        }
+
+        async function createPullRequest(owner, repo, installationId, title, head, base, body) {
+            const github = await asInstallation(installationId);
+            const pr = await github.pulls.create({
+                owner,
+                repo,
+                title,
+                head,
+                base,
+                body
+            });
+            return pr;
         }
 
         function generateJwt(id, cert) {
@@ -136,6 +166,6 @@ module.exports = {
             return jwt.sign(payload, cert, { algorithm: 'RS256' });
         }
 
-        return { asInstallation, createToken, getConfig, gitConfigExists, createBranchFromMain };
+        return { asInstallation, getConfig, gitConfigExists, createBranch, createCommit, createPullRequest };
     }
 };
