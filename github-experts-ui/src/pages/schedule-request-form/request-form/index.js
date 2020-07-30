@@ -16,7 +16,7 @@ export const formatDateTime = (date) =>
   moment(date).format('dddd, MMM DD, YYYY');
 
 export const RequestForm = styled(
-  withRouter(({ className, history, location }) => {
+  withRouter(({ className, history, location, owner, repo }) => {
     const [selectedRadioIndex, setselectedRadioIndex] = useState(0);
     const [, setError] = useState(undefined);
     const textAreaRef = useRef(null);
@@ -28,7 +28,7 @@ export const RequestForm = styled(
     }
 
     const createAppt = useCallback((payload) => {
-      return request('appointment', {
+      return request('/api/appointment', {
         method: 'POST',
         body: JSON.stringify(payload),
       })
@@ -67,7 +67,7 @@ export const RequestForm = styled(
               ))}
             </div>
             <div className="cta-button">
-              <Link to="/schedule-request-form-start">
+              <Link to={`/schedule-request-form-start/${owner}/${repo}`}>
                 <button className="btn" type="button">
                   Change
                 </button>
@@ -116,12 +116,14 @@ export const RequestForm = styled(
                 Rate: get(location, 'state.Rate'),
                 RequestFree: selectedRadioIndex === 1 ? true : false,
                 Expert: location.state.Expert,
-                // Need to get this from somewhere else.
-                Repo: 'github-experts+github-experts-sample-repo',
+                Repo: `${owner}+${repo}`,
               };
 
               createAppt(payload).then(() => {
-                history.push('/schedule-request-form-success', payload);
+                history.push(
+                  `/schedule-request-form-success/${owner}/${repo}`,
+                  payload
+                );
               });
             }}
           >

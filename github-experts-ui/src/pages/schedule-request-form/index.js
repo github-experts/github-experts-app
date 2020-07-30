@@ -5,40 +5,45 @@ import { BreadCrumbs } from 'components/Breadcrumbs';
 import { RequestFormStart } from './request-form-start/index';
 import { RequestForm } from './request-form/index';
 import { RequestFormSuccess } from './request-form-success';
+import { useParams } from 'react-router-dom';
 
-export const ScheduleRequestFormStart = () => (
-  <Layout headerOptions={[{ text: 'Schedule', path: '/scheduler' }]}>
-    <BoxPanel>
-      <BreadCrumbs
-        breadCrumbPaths={[
-          'patniko',
-          'experts-demo',
-          'Schedule a coaching session',
-        ]}
-      />
-      <RequestFormStart></RequestFormStart>
-    </BoxPanel>
-  </Layout>
-);
+export const ScheduleRequestFormStart = () => {
+  const { owner, repo } = useParams();
 
-export const ScheduleRequestForm = () => {
   return (
     <Layout headerOptions={[{ text: 'Schedule', path: '/scheduler' }]}>
       <BoxPanel>
         <BreadCrumbs
-          breadCrumbPaths={['patniko', 'experts-demo', 'Requests']}
+          breadCrumbPaths={[owner, repo, 'Schedule a coaching session']}
         />
-        <RequestForm />
+        <RequestFormStart owner={owner} repo={repo} />
       </BoxPanel>
     </Layout>
   );
 };
 
-export const ScheduleRequestFormSuccess = () => (
-  <Layout headerOptions={[{ text: 'Schedule', path: '/scheduler' }]}>
-    <BoxPanel>
-      <BreadCrumbs breadCrumbPaths={['patniko', 'experts-demo', 'Requests']} />
-      <RequestFormSuccess />
-    </BoxPanel>
-  </Layout>
-);
+export const ScheduleRequestForm = () => {
+  const { owner, repo } = useParams();
+
+  return (
+    <Layout headerOptions={[{ text: 'Schedule', path: '/scheduler' }]}>
+      <BoxPanel>
+        <BreadCrumbs breadCrumbPaths={[owner, repo, 'Requests']} />
+        <RequestForm owner={owner} repo={repo} />
+      </BoxPanel>
+    </Layout>
+  );
+};
+
+export const ScheduleRequestFormSuccess = () => {
+  const { owner, repo } = useParams();
+
+  return (
+    <Layout headerOptions={[{ text: 'Schedule', path: '/scheduler' }]}>
+      <BoxPanel>
+        <BreadCrumbs breadCrumbPaths={[owner, repo, 'Requests']} />
+        <RequestFormSuccess owner={owner} repo={repo} />
+      </BoxPanel>
+    </Layout>
+  );
+};

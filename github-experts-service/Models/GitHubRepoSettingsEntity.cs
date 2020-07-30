@@ -1,11 +1,14 @@
 namespace GithubExperts.Api.Models
 {
-//    var gitHubRepoSettingsEntity = GitHubRepoSettingsEntity.FromJson(jsonString);
     using System;
-    using System.Collections.Generic;
     using System.Globalization;
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
+
+    public static class Serialize
+    {
+        public static string ToJson(this GitHubRepoSettingsEntity self) => JsonConvert.SerializeObject(self, Converter.Settings);
+    }
 
     public partial class GitHubRepoSettingsEntity
     {
@@ -318,11 +321,6 @@ namespace GithubExperts.Api.Models
         public static GitHubRepoSettingsEntity FromJson(string json) => JsonConvert.DeserializeObject<GitHubRepoSettingsEntity>(json, Converter.Settings);
     }
 
-    public static class Serialize
-    {
-        public static string ToJson(this GitHubRepoSettingsEntity self) => JsonConvert.SerializeObject(self, Converter.Settings);
-    }
-
     internal static class Converter
     {
         public static readonly JsonSerializerSettings Settings = new JsonSerializerSettings
@@ -331,7 +329,7 @@ namespace GithubExperts.Api.Models
             DateParseHandling = DateParseHandling.None,
             Converters =
             {
-                new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal }
+                new IsoDateTimeConverter { DateTimeStyles = DateTimeStyles.AssumeUniversal },
             },
         };
     }

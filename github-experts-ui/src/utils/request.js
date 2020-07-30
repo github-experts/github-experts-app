@@ -1,6 +1,6 @@
-const apiRoot = process.env.REACT_APP_API_ROOT || '/api';
+const apiRoot = process.env.REACT_APP_API_ROOT || '';
 
-export default function request(url, opts) {
+export default function request(url, opts = {}) {
   const token = localStorage.getItem('id_token');
 
   if (token) {

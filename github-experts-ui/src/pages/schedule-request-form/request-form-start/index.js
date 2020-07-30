@@ -10,10 +10,7 @@ import {
   GetMonthlyAvailability,
   GetDailyAvailability,
 } from 'api/ExpertService';
-
-// TODO: Where do you come from!?!?
-const REPO = 'github-experts+github-experts-sample-repo';
-const REQUESTOR = 'wkilday';
+import useProfile from 'utils/useProfile';
 
 const defaultTimeslots = [
   { value: '09:00 AM' },
@@ -32,7 +29,8 @@ const defaultTimeslots = [
 
 const shortDateOptions = { weekday: 'short', month: 'numeric', day: 'numeric' };
 
-export const RequestFormStart = styled(({ className, children }) => {
+export const RequestFormStart = styled(({ className, owner, repo }) => {
+  const user = useProfile();
   const today = moment().startOf('day');
   const tomorrow = moment().startOf('day').add(1, 'days');
 
@@ -65,33 +63,37 @@ export const RequestFormStart = styled(({ className, children }) => {
   const [activeDay, setActiveDay] = useState(days[0]);
 
   useEffect(() => {
-    GetExperts(REPO).then((newExperts) => {
+    GetExperts(`${owner}+${repo}`).then((newExperts) => {
       setTutors(newExperts);
       setActiveTutor(newExperts[0]);
     });
-  }, []);
+  }, [owner, repo]);
 
   useEffect(() => {
     if (!activeTutor) return;
 
-    GetMonthlyAvailability(REPO, activeTutor.name).then((monthlyDays) => {
-      let dates = monthlyDays
-        .filter((d) => !d.available)
-        .map((d) => new Date(d.date));
+    GetMonthlyAvailability(`${owner}+${repo}`, activeTutor.name).then(
+      (monthlyDays) => {
+        let dates = monthlyDays
+          .filter((d) => !d.available)
+          .map((d) => new Date(d.date));
 
-      setExcludeDates(dates);
-    });
-  }, [activeTutor]);
+        setExcludeDates(dates);
+      }
+    );
+  }, [activeTutor, owner, repo]);
 
   useEffect(() => {
     if (!activeTutor || !activeDay) return;
 
-    GetDailyAvailability(REPO, activeTutor.name, activeDay.value).then(
-      (timeslots) => {
-        setTimeslots(timeslots);
-      }
-    );
-  }, [activeDay, activeTutor]);
+    GetDailyAvailability(
+      `${owner}+${repo}`,
+      activeTutor.name,
+      activeDay.value
+    ).then((timeslots) => {
+      setTimeslots(timeslots);
+    });
+  }, [activeDay, activeTutor, owner, repo]);
 
   function handleTutorChanged(event) {
     let tutor = tutors.find((t) => t.id === event.target.value);
@@ -190,7 +192,7 @@ export const RequestFormStart = styled(({ className, children }) => {
       <footer className="d-flex flex-justify-end flex-items-center pr-4">
         <Link
           to={{
-            pathname: '/schedule-request-form',
+            pathname: `/schedule-request-form/${owner}/${repo}`,
             state: {
               DateTime: new Date(
                 moment(activeDay.value).format('YYYY-MM-DD') +
@@ -202,7 +204,7 @@ export const RequestFormStart = styled(({ className, children }) => {
               RequestFree:
                 activeTutor &&
                 activeTutor.labels.includes('Open to donate time'),
-              Requestor: REQUESTOR,
+              Requestor: user?.login,
             },
           }}
         >
