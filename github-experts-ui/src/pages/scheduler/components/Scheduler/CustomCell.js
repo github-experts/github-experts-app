@@ -13,8 +13,8 @@ export const CustomCellComponent = styled(({ className, data, color }) => {
       onMouseOver={() => !show && setShow(!show)}
       onMouseLeave={() => show && setShow(!show)}
     >
-      {`@${data.name}`}
-      <div className={`Popover position-relative ${!show && 'hidden'}`}>
+      <p className="name">{`@${data.name}`}</p>
+      {/* <div className={`Popover position-relative ${!show && 'hidden'}`}>
         <div className="Popover-message Popover-message--top-left p-4 mt-2 Box box-shadow-large">
           <h4 className="mb-2">Popover heading</h4>
           <p>Message about this particular piece of UI.</p>
@@ -22,19 +22,23 @@ export const CustomCellComponent = styled(({ className, data, color }) => {
             Got it!
           </button>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 })`
   & {
-    z-index: -5;
+    // z-index: -1;
     background: ${(props) => props.data.color};
-    border-left-color: rgb(243, 167, 71);
-    border-left-style: solid;
+    // border-left-color: rgb(243, 167, 71);
+    // border-left-style: solid;
     height: 47px;
-    border-left-width: 6px;
+    // border-left-width: 6px;
+  }
+  .name {
+    color: white;
   }
   .Popover {
+    z-index: 1030;
     &::hover {
       z-index: 10;
     }

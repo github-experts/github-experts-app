@@ -8,7 +8,7 @@ export const RepoCell = styled(({ className, color, repo }) => (
     <div className="text">
       <p className="authorName">
         {repo[0]}
-        <span>&nbsp;/</span>
+        <span>&nbsp;/&nbsp;</span>
       </p>
       <p className="repoName">{repo[1]}</p>
     </div>

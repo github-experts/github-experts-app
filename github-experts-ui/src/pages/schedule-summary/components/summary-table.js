@@ -1,10 +1,11 @@
 import { AcceptanceButtons, RepoCell } from './components.misc';
-import React, { useEffect } from 'react';
 import { useSortBy, useTable } from 'react-table';
+import React from 'react';
 import { Styles } from './summary-table.style';
-import { storeSchedule } from 'stores/schedulerStore';
-import { useDispatch, useSelector } from 'react-redux';
 import { getSchedule } from '../../../stores/schedulerStore';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
+import { randomColor } from 'pages/scheduler/components/Scheduler/CustomCell';
 
 function Table({ columns, data }) {
   const {
@@ -54,50 +55,19 @@ function Table({ columns, data }) {
 }
 
 export function SummaryTable() {
-  const dispatch = useDispatch();
-  const scheduler = useSelector(getSchedule);
-
-  useEffect(() => {
-    dispatch(
-      storeSchedule([
-        {
-          reqNumber: '#271',
-          time: '7/12 1:00PM',
-          profile: '@Gafdu',
-          repo: ['patniko', 'tutorDemo'],
-          payment: '$50 USD',
-          description:
-            'Convalis luctus eleifend ut id amet sociis. Libero feugiat',
-          repoCircleColor: 'orange',
-        },
-        {
-          reqNumber: '#272',
-          time: '7/12 1:00PM',
-          profile: '@Gafdu',
-          repo: ['patniko', 'tutorDemo'],
-          payment: '$50US',
-          isFree: true,
-          description:
-            'Convalis luctus eleifend ut id amet sociis. Libero feugiat',
-          repoCircleColor: 'red',
-        },
-      ])
-    );
-  }, [dispatch]);
+  const appointments = useSelector(getSchedule);
 
   const columns = React.useMemo(
     () => [
       {
-        Header: 'REQ #',
-        accessor: 'reqNumber',
-      },
-      {
         Header: 'Time',
-        accessor: 'time',
+        accessor: 'dateTime',
+        Cell: (props) =>
+          moment(props.row.original.dateTime).format('MM/DD hh:mm A'),
       },
       {
-        Header: 'Profile',
-        accessor: 'profile',
+        Header: 'Requestor',
+        accessor: 'requestor',
       },
       {
         Header: 'Repo',
@@ -105,27 +75,30 @@ export function SummaryTable() {
         Cell: (props) => {
           return (
             <RepoCell
-              repo={props.row.original.repo}
-              color={props.row.original.repoCircleColor}
+              repo={[
+                props.row.original.expert,
+                props.row.original.repo.split('+')[1],
+              ]}
+              color={randomColor()}
             />
           );
         },
       },
       {
         Header: 'Payment',
-        accessor: 'payment',
+        accessor: 'rate',
         Cell: (props) =>
-          props.row.original.isFree ? (
+          props.row.original.requestFree ? (
             <span className="Label mr-1 Label--pink" title="Label: Free">
               Free
             </span>
           ) : (
-            <p>{props.row.original.payment}</p>
+            <p>${props.row.original.rate}</p>
           ),
       },
       {
         Header: 'Description',
-        accessor: 'description',
+        accessor: 'details',
       },
       {
         Header: 'Acceptance',
@@ -137,7 +110,7 @@ export function SummaryTable() {
 
   return (
     <Styles>
-      <Table columns={columns} data={scheduler || []} />
+      <Table columns={columns} data={appointments || []} />
     </Styles>
   );
 }
