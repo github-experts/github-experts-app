@@ -59,7 +59,11 @@ jobs:
                 b2cClientId=$B2C_CLIENT_ID \
                 b2cTenantName=$B2C_TENANT_NAME \
                 sendgridPassword=$SENDGRID_PASSWORD \
-                sendgridApiKey=$SENDGRID_API_KEY
+                sendgridApiKey=$SENDGRID_API_KEY \
+                GITHUB_APP_ID=$GITHUB_APP_ID \
+                GITHUB_CLIENT_ID=$GITHUB_CLIENT_ID \
+                GITHUB_CLIENT_SECRET=$GITHUB_CLIENT_SECRET
+
         env:
           SP_SECRET: ${{ secrets.SP_SECRET }}
           SP_CLIENT: "dd082b18-ec0f-43b5-94da-dcb9da0714d0"
@@ -70,3 +74,6 @@ jobs:
           B2C_TENANT_NAME: "h3dev"
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
           SENDGRID_PASSWORD: ${{ secrets.SENDGRID_PASSWORD }}
+          GITHUB_APP_ID: "74517"
+          GITHUB_CLIENT_ID: "Iv1.f5fa489caf10b58a"
+          GITHUB_CLIENT_SECRET: "c3c6a7be3bda54c42f7847914d38471fd6272c7f"
