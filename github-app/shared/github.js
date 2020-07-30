@@ -85,11 +85,11 @@ module.exports = {
             }
         }
 
-        async function getRequest(installationId, url, data) {
+        async function getRequest(installationId, url, data, method) {
             const authToken = await getInstallationToken(installationId);
             const rp = require('request-promise');
             const options = {
-                method: 'POST',
+                method: method,
                 uri: url,
                 body: data,
                 json: true,
@@ -108,21 +108,17 @@ module.exports = {
                 "sha": `${sha}`
             };
             const url = `https://api.github.com/repos/${owner}/${repo}/git/refs`;
-            const branch = await getRequest(installationId, url, dataString);
+            const branch = await getRequest(installationId, url, dataString, "POST");
             return branch;
         }
 
         async function createCommit(owner, repo, installationId, branch, sha, path, message, content) {
-            const github = await asInstallation(installationId);
             const encodedContent = Base64.encode(content);
-            const commit = await github.repos.createOrUpdateFileContents({
-                owner,
-                repo,
-                branch,
-                sha,
-                path,
-                message,
-                content,
+            const dataString = {
+                branch: branch,
+                sha: sha,
+                message: message,
+                content: encodedContent,
                 committer: {
                     name: "Github Experts Bot",
                     email: "githubexperts@microsoft.com",
@@ -131,7 +127,9 @@ module.exports = {
                     name: "Github Experts Bot",
                     email: "githubexperts@microsoft.com",
                 }
-            });
+            };
+            const url = `https://api.github.com/repos/${owner}/${repo}/contents${path}`;
+            const commit = await getRequest(installationId, url, dataString, "PUT");
             return commit;
         }
 
