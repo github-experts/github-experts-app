@@ -1,7 +1,10 @@
 const githubRequests = require('../shared/github');
 const githubApp = githubRequests.createApp();
 
-const PULL_REQUEST_HEAD = "github-experts-config";
+CONFIG_PATH = "/.github/github-experts.yml";
+README_PATH = "/README.md";
+
+const PULL_REQUEST_HEAD = "bot-github-experts-config";
 const PULL_REQUEST_BRANCH = "master";
 const PULL_REQUEST_TITLE = "Add Github Experts configuration";
 const PULL_REQUEST_BODY = `Github Experts connects developers with maintainers and other 
@@ -28,17 +31,16 @@ module.exports = async function (context, request) {
             const repoId = repository.id;
 
             try {
-                const configExists = false;// github_app.gitConfigExists(owner, repoName, installationId);
+                const configExists = github_app.gitConfigExists(owner, repo, installationId);
 
                 if (!configExists) {
 
                     // Create branch
-                    await githubApp.createBranchFromMain(owner, repo, installationId, PULL_REQUEST_HEAD);
+                    const branch = await githubApp.createBranchFromMain(owner, repo, installationId, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH);
 
                     // Commit config file
-                    
-
-                    // Commit a change to README
+                    createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.commit.sha, CONFIG_PATH, "Yaml for Github Experts configuration", `yml: ${owner}`);
+                    createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.commit.sha, CONFIG_PATH, "Add Github Experts link to README", `link: ${owner}`);
 
                     // Open PR
                     octokit.pulls.create({
