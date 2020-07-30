@@ -3,8 +3,11 @@ import styled from 'styled-components';
 import GithubLogo from 'assets/github-logo.svg';
 import ExpertsLogo from 'assets/Experts.svg';
 import { StyledLink } from 'components/StyledLink';
+import useProfile from 'utils/useProfile';
 
 export const Header = styled(({ className, headerOptions, pathState }) => {
+  const user = useProfile();
+
   return (
     <header className={`${className} d-flex Header`}>
       <div className="nav d-flex flex-items-center flex-1">
@@ -24,13 +27,15 @@ export const Header = styled(({ className, headerOptions, pathState }) => {
           </StyledLink>
         ))}
       </div>
-      <img
-        className="avatar avatar-small mr-2"
-        alt="jonrohan"
-        src="https://github.com/jonrohan.png?v=3&s=40"
-        width="40"
-        height="40"
-      />
+      {user && (
+        <img
+          className="avatar avatar-small mr-2"
+          alt={user.login}
+          src={user.avatar_url}
+          width="40"
+          height="40"
+        />
+      )}
     </header>
   );
 })`

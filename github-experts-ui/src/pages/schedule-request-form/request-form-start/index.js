@@ -10,8 +10,7 @@ import {
   GetMonthlyAvailability,
   GetDailyAvailability,
 } from 'api/ExpertService';
-
-const REQUESTOR = 'wkilday';
+import useProfile from 'utils/useProfile';
 
 const defaultTimeslots = [
   { value: '09:00 AM' },
@@ -31,6 +30,7 @@ const defaultTimeslots = [
 const shortDateOptions = { weekday: 'short', month: 'numeric', day: 'numeric' };
 
 export const RequestFormStart = styled(({ className, owner, repo }) => {
+  const user = useProfile();
   const today = moment().startOf('day');
   const tomorrow = moment().startOf('day').add(1, 'days');
 
@@ -204,7 +204,7 @@ export const RequestFormStart = styled(({ className, owner, repo }) => {
               RequestFree:
                 activeTutor &&
                 activeTutor.labels.includes('Open to donate time'),
-              Requestor: REQUESTOR,
+              Requestor: user?.login,
             },
           }}
         >
