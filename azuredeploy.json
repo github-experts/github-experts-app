@@ -57,9 +57,6 @@
         "description": "Number of RUs to provision for database"
       }
     },
-    "github_app_name": {
-      "type": "String"
-    },
     "GITHUB_APP_ID": {
       "type": "String"
     },
@@ -76,8 +73,9 @@
     "serviceBusName": "[concat(parameters('appName'), 'sb')]",
     "databaseName": "[concat(parameters('appName'), 'cosmos')]",
     "location": "[resourceGroup().location]",
-    "serverfarms_github_app_name": "[parameters('github_app_name')]",
-    "storageaccount_github_app_name": "[parameters('github_app_name')]",
+    "github_app_name": "[concat(parameters('appName'), 'githubapp')]",
+    "serverfarms_github_app_name": "[variables('github_app_name')]",
+    "storageaccount_github_app_name": "[variables('github_app_name')]",
     "defaultSASKeyName": "RootManageSharedAccessKey",
     "authRuleResourceId": "[resourceId('Microsoft.ServiceBus/namespaces/authorizationRules', variables('serviceBusName'), variables('defaultSASKeyName'))]",
     "sbVersion": "2017-04-01" //,
@@ -429,7 +427,7 @@
     {
         "type": "microsoft.insights/components",
         "apiVersion": "2018-05-01-preview",
-        "name": "[parameters('github_app_name')]",
+        "name": "[variables('github_app_name')]",
         "location": "[variables('location')]",
         "kind": "web",
         "properties": {
@@ -536,7 +534,7 @@
     {
       "type": "Microsoft.Web/sites",
       "apiVersion": "2018-11-01",
-      "name": "[parameters('github_app_name')]",
+      "name": "[variables('github_app_name')]",
       "location": "[variables('location')]",
       "dependsOn": [
           "[resourceId('Microsoft.Web/serverfarms', variables('serverfarms_github_app_name'))]"
@@ -546,12 +544,12 @@
           "enabled": true,
           "hostNameSslStates": [
               {
-                  "name": "[concat(parameters('github_app_name'), '.azurewebsites.net')]",
+                  "name": "[concat(variables('github_app_name'), '.azurewebsites.net')]",
                   "sslState": "Disabled",
                   "hostType": "Standard"
               },
               {
-                  "name": "[concat(parameters('github_app_name'), '.scm.azurewebsites.net')]",
+                  "name": "[concat(variables('github_app_name'), '.scm.azurewebsites.net')]",
                   "sslState": "Disabled",
                   "hostType": "Repository"
               }
@@ -564,19 +562,19 @@
             "appSettings": [
               {
                 "name": "AzureWebJobsStorage",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('github_app_name'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('github_app_name')), '2019-06-01').keys[0].value)]"
+                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('github_app_name'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('github_app_name')), '2019-06-01').keys[0].value)]"
               },
               {
                 "name": "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING",
-                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', parameters('github_app_name'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('github_app_name')), '2019-06-01').keys[0].value)]"
+                "value": "[concat('DefaultEndpointsProtocol=https;AccountName=', variables('github_app_name'), ';EndpointSuffix=', environment().suffixes.storage, ';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('github_app_name')), '2019-06-01').keys[0].value)]"
               },
               {
                 "name": "WEBSITE_CONTENTSHARE",
-                "value": "[toLower(parameters('github_app_name'))]"
+                "value": "[toLower(variables('github_app_name'))]"
               },
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                "value": "[reference(concat('Microsoft.Insights/components/', parameters('github_app_name'))).InstrumentationKey]"
+                "value": "[reference(concat('Microsoft.Insights/components/', variables('github_app_name'))).InstrumentationKey]"
               },
               {
                 "name": "FUNCTIONS_EXTENSION_VERSION",
@@ -617,10 +615,10 @@
     {
       "type": "Microsoft.Web/sites/config",
       "apiVersion": "2018-11-01",
-      "name": "[concat(parameters('github_app_name'), '/web')]",
+      "name": "[concat(variables('github_app_name'), '/web')]",
       "location": "[variables('location')]",
       "dependsOn": [
-          "[resourceId('Microsoft.Web/sites', parameters('github_app_name'))]"
+          "[resourceId('Microsoft.Web/sites', variables('github_app_name'))]"
       ],
       "properties": {
           "numberOfWorkers": -1,
@@ -693,107 +691,107 @@
           "ftpsState": "AllAllowed",
           "reservedInstanceCount": 0
       }
-    },
-    {
-        "type": "Microsoft.Web/sites/deployments",
-        "apiVersion": "2018-11-01",
-        "name": "[concat(parameters('github_app_name'), '/7afe3349c90a44b1b8515589b0235138')]",
-        "location": "[variables('location')]",
-        "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('github_app_name'))]"
-        ],
-        "properties": {
-            "status": 4,
-            "author_email": "N/A",
-            "author": "N/A",
-            "deployer": "ZipDeploy",
-            "message": "Created via a push deployment",
-            "start_time": "2020-07-30T18:43:13.5410641Z",
-            "end_time": "2020-07-30T18:43:24.338095Z",
-            "active": true
-        }
-    },
-    {
-        "type": "Microsoft.Web/sites/functions",
-        "apiVersion": "2018-11-01",
-        "name": "[concat(parameters('github_app_name'), '/Setup')]",
-        "location": "[variables('location')]",
-        "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('github_app_name'))]"
-        ],
-        "properties": {
-            "script_root_path_href": "https://github-app.azurewebsites.net/admin/vfs/site/wwwroot/Setup/",
-            "script_href": "https://github-app.azurewebsites.net/admin/vfs/site/wwwroot/Setup/index.js",
-            "config_href": "https://github-app.azurewebsites.net/admin/vfs/site/wwwroot/Setup/function.json",
-            "href": "https://github-app.azurewebsites.net/admin/functions/Setup",
-            "config": {}
-        }
-    },
-    {
-        "type": "Microsoft.Web/sites/functions",
-        "apiVersion": "2018-11-01",
-        "name": "[concat(parameters('github_app_name'), '/YamlConfig')]",
-        "location": "[variables('location')]",
-        "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('github_app_name'))]"
-        ],
-        "properties": {
-            "script_root_path_href": "https://github-app.azurewebsites.net/admin/vfs/site/wwwroot/YamlConfig/",
-            "script_href": "https://github-app.azurewebsites.net/admin/vfs/site/wwwroot/YamlConfig/index.js",
-            "config_href": "https://github-app.azurewebsites.net/admin/vfs/site/wwwroot/YamlConfig/function.json",
-            "href": "https://github-app.azurewebsites.net/admin/functions/YamlConfig",
-            "config": {}
-        }
-    },
-    {
-        "type": "Microsoft.Web/sites/hostNameBindings",
-        "apiVersion": "2018-11-01",
-        "name": "[concat(parameters('github_app_name'), '/', parameters('github_app_name'), '.azurewebsites.net')]",
-        "location": "[variables('location')]",
-        "dependsOn": [
-            "[resourceId('Microsoft.Web/sites', parameters('github_app_name'))]"
-        ],
-        "properties": {
-            "siteName": "github-app",
-            "hostNameType": "Verified"
-        }
-    },
-    {
-        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-        "apiVersion": "2019-06-01",
-        "name": "[concat(variables('storageaccount_github_app_name'), '/default/azure-webjobs-hosts')]",
-        "dependsOn": [
-            "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageaccount_github_app_name'), 'default')]",
-            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageaccount_github_app_name'))]"
-        ],
-        "properties": {
-            "publicAccess": "None"
-        }
-    },
-    {
-        "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
-        "apiVersion": "2019-06-01",
-        "name": "[concat(variables('storageaccount_github_app_name'), '/default/azure-webjobs-secrets')]",
-        "dependsOn": [
-            "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageaccount_github_app_name'), 'default')]",
-            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageaccount_github_app_name'))]"
-        ],
-        "properties": {
-            "publicAccess": "None"
-        }
-    },
-    {
-        "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
-        "apiVersion": "2019-06-01",
-        "name": "[concat(variables('storageaccount_github_app_name'), '/default/github-appb318')]",
-        "dependsOn": [
-            "[resourceId('Microsoft.Storage/storageAccounts/fileServices', variables('storageaccount_github_app_name'), 'default')]",
-            "[resourceId('Microsoft.Storage/storageAccounts', variables('storageaccount_github_app_name'))]"
-        ],
-        "properties": {
-            "shareQuota": 5120
-        }
-    }
+    }// ,
+    // {
+    //     "type": "Microsoft.Web/sites/deployments",
+    //     "apiVersion": "2018-11-01",
+    //     "name": "[concat(variables('github_app_name'), '/7afe3349c90a44b1b8515589b0235138')]",
+    //     "location": "[variables('location')]",
+    //     "dependsOn": [
+    //         "[resourceId('Microsoft.Web/sites', variables('github_app_name'))]"
+    //     ],
+    //     "properties": {
+    //         "status": 4,
+    //         "author_email": "N/A",
+    //         "author": "N/A",
+    //         "deployer": "ZipDeploy",
+    //         "message": "Created via a push deployment",
+    //         "start_time": "2020-07-30T18:43:13.5410641Z",
+    //         "end_time": "2020-07-30T18:43:24.338095Z",
+    //         "active": true
+    //     }
+    // },
+    // {
+    //     "type": "Microsoft.Web/sites/functions",
+    //     "apiVersion": "2018-11-01",
+    //     "name": "[concat(variables('github_app_name'), '/Setup')]",
+    //     "location": "[variables('location')]",
+    //     "dependsOn": [
+    //         "[resourceId('Microsoft.Web/sites', variables('github_app_name'))]"
+    //     ],
+    //     "properties": {
+    //         "script_root_path_href": "https://github-app.azurewebsites.net/admin/vfs/site/wwwroot/Setup/",
+    //         "script_href": "https://github-app.azurewebsites.net/admin/vfs/site/wwwroot/Setup/index.js",
+    //         "config_href": "https://github-app.azurewebsites.net/admin/vfs/site/wwwroot/Setup/function.json",
+    //         "href": "https://github-app.azurewebsites.net/admin/functions/Setup",
+    //         "config": {}
+    //     }
+    // },
+    // {
+    //     "type": "Microsoft.Web/sites/functions",
+    //     "apiVersion": "2018-11-01",
+    //     "name": "[concat(variables('github_app_name'), '/YamlConfig')]",
+    //     "location": "[variables('location')]",
+    //     "dependsOn": [
+    //         "[resourceId('Microsoft.Web/sites', variables('github_app_name'))]"
+    //     ],
+    //     "properties": {
+    //         "script_root_path_href": "https://github-app.azurewebsites.net/admin/vfs/site/wwwroot/YamlConfig/",
+    //         "script_href": "https://github-app.azurewebsites.net/admin/vfs/site/wwwroot/YamlConfig/index.js",
+    //         "config_href": "https://github-app.azurewebsites.net/admin/vfs/site/wwwroot/YamlConfig/function.json",
+    //         "href": "https://github-app.azurewebsites.net/admin/functions/YamlConfig",
+    //         "config": {}
+    //     }
+    // },
+    // {
+    //     "type": "Microsoft.Web/sites/hostNameBindings",
+    //     "apiVersion": "2018-11-01",
+    //     "name": "[concat(variables('github_app_name'), '/', variables('github_app_name'), '.azurewebsites.net')]",
+    //     "location": "[variables('location')]",
+    //     "dependsOn": [
+    //         "[resourceId('Microsoft.Web/sites', variables('github_app_name'))]"
+    //     ],
+    //     "properties": {
+    //         "siteName": "github-app",
+    //         "hostNameType": "Verified"
+    //     }
+    // },
+    // {
+    //     "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+    //     "apiVersion": "2019-06-01",
+    //     "name": "[concat(variables('storageaccount_github_app_name'), '/default/azure-webjobs-hosts')]",
+    //     "dependsOn": [
+    //         "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageaccount_github_app_name'), 'default')]",
+    //         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageaccount_github_app_name'))]"
+    //     ],
+    //     "properties": {
+    //         "publicAccess": "None"
+    //     }
+    // },
+    // {
+    //     "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+    //     "apiVersion": "2019-06-01",
+    //     "name": "[concat(variables('storageaccount_github_app_name'), '/default/azure-webjobs-secrets')]",
+    //     "dependsOn": [
+    //         "[resourceId('Microsoft.Storage/storageAccounts/blobServices', variables('storageaccount_github_app_name'), 'default')]",
+    //         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageaccount_github_app_name'))]"
+    //     ],
+    //     "properties": {
+    //         "publicAccess": "None"
+    //     }
+    // },
+    // {
+    //     "type": "Microsoft.Storage/storageAccounts/fileServices/shares",
+    //     "apiVersion": "2019-06-01",
+    //     "name": "[concat(variables('storageaccount_github_app_name'), '/default/github-appb318')]",
+    //     "dependsOn": [
+    //         "[resourceId('Microsoft.Storage/storageAccounts/fileServices', variables('storageaccount_github_app_name'), 'default')]",
+    //         "[resourceId('Microsoft.Storage/storageAccounts', variables('storageaccount_github_app_name'))]"
+    //     ],
+    //     "properties": {
+    //         "shareQuota": 5120
+    //     }
+    // }
     /* #endregion */
   ],
   "outputs": {

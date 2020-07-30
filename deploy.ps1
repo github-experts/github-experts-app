@@ -10,7 +10,6 @@ $resourceGroup = $env:APP_GROUP
 $appName = $env:APP_NAME
 $sendgridAPIKey = $env:SENDGRID_API_KEY
 $sendGridPassword = $env:SENDGRID_PASSWORD
-$githubAppFunctionName = $env:GITHUB_APP_NAME
 $githubAppId = $env:GITHUB_APP_ID
 $githubAppClientId = $env:GITHUB_CLIENT_ID
 $githubAppClientSecret = $env:GITHUB_CLIENT_SECRET
@@ -26,7 +25,7 @@ az login `
 $deployment = az deployment group create `
   --resource-group $resourceGroup `
   --template-file $projectRoot/azuredeploy.json `
-  --parameters appName=$appName b2cClientId=$b2cClientId b2cTenantName=$b2cTenantName sendgridPassword=$sendGridPassword sendgridApiKey=$sendgridAPIKey github_app_name=$githubAppFunctionName GITHUB_APP_ID=$githubAppId GITHUB_CLIENT_ID=$githubAppClientId GITHUB_CLIENT_SECRET=$githubAppClientSecret `
+  --parameters appName=$appName b2cClientId=$b2cClientId b2cTenantName=$b2cTenantName sendgridPassword=$sendGridPassword sendgridApiKey=$sendgridAPIKey GITHUB_APP_ID=$githubAppId GITHUB_CLIENT_ID=$githubAppClientId GITHUB_CLIENT_SECRET=$githubAppClientSecret `
   --output json `
 | ConvertFrom-Json
 

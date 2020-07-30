@@ -32,7 +32,6 @@ jobs:
           B2C_TENANT_NAME: "h3dev"
           SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
           SENDGRID_PASSWORD: ${{ secrets.SENDGRID_PASSWORD }}
-          GITHUB_APP_NAME: "githubapp"
           GITHUB_APP_ID: "74517"
           GITHUB_CLIENT_ID: "Iv1.f5fa489caf10b58a"
           GITHUB_CLIENT_SECRET: "c3c6a7be3bda54c42f7847914d38471fd6272c7f"
