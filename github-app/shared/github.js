@@ -1,4 +1,3 @@
-const request = require('request-promise');
 const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
@@ -18,57 +17,27 @@ const auth = createAppAuth({
 });
 
 module.exports = {
-    getIdentityRequestUrl: function (state, redirect_url) {
-        return 'https://github.com/login/oauth/authorize' +
-            `?client_id=${client_id}&redirect_url=${redirect_url}` +
-            `&scope=user&state=${state}&allow_signup=false`;
-    },
-
-    getAccessToken: function (state, code, redirect_url) {
-        const location = 'https://github.com/login/oauth/access_token' +
-            `?client_id=${client_id}&client_secret=${client_secret}` +
-            `&code=${code}&state=${state}&redirect_url=${redirect_url}`;
-        const options = {
-            url: location,
-            method: 'POST'
-        };
-        return request(options);
-    },
-
-    getUserApps: function (token) {
-        const options = {
-            url: `https://api.github.com/user/installations?access_token=${token}`,
-            method: 'GET',
-            headers: {
-                'Accept': 'application/vnd.github.machine-man-preview+json',
-                'Content-Type': 'application/json',
-                'User-Agent': 'node.js'
-            }
-        };
-        return request(options);
-    },
-
-    getCurrentUser: async function (token) {
-        const options = {
-            url: `https://api.github.com/user?access_token=${token}`,
-            method: 'GET',
-            headers: {
-                'Accept': 'application/vnd.github.machine-man-preview+json',
-                'Content-Type': 'application/json',
-                'User-Agent': 'node.js'
-            }
-        };
-        return request(options);
-    },
-
     createApp: function () {
-        async function asInstallation(installationId) {
+        var token = "";
+
+        async function getInstallationToken(installationId) {
             const response = await auth({
                 type: "installation",
                 installationId: installationId,
             });
-            //response.token = `token ${response.token}`;
-            const github = new Octokit(response);
+            return response.token;
+        }
+
+        async function asInstallation(installationId) {
+            if (!token) {
+                const response = await auth({
+                    type: "installation",
+                    installationId: installationId,
+                });
+                response.token = `${response.token}`;
+                this.token = response;
+            }
+            const github = new Octokit(this.token);
             return github;
         }
 
@@ -107,18 +76,40 @@ module.exports = {
             const existingConfigBranch = branches.data.filter(i => i.name == configBranchName);
             if (mainBranch.length > 0 && existingConfigBranch.length == 0) {
                 const sha = mainBranch[0].commit.sha;
-                const newBranch = await github.git.createRef({
-                    owner: owner,
-                    repo: repo,
-                    ref: `refs/heads/${configBranchName}`,
-                    sha: sha
-                });
+                newBranch = await createRemoteBranch(owner, repo, installationId, configBranchName, sha);
                 return newBranch;
             } else if (existingConfigBranch.length > 0) {
                 return existingConfigBranch[0];
             } else {
                 return undefined;
             }
+        }
+
+        async function getRequest(installationId, url, data) {
+            const authToken = await getInstallationToken(installationId);
+            const rp = require('request-promise');
+            const options = {
+                method: 'POST',
+                uri: url,
+                body: data,
+                json: true,
+                headers: {
+                    "Authorization": `token ${authToken}`,
+                    "User-Agent": "Github Experts"
+                }
+            };
+            const response = await rp(options);
+            return response;
+        }
+
+        async function createRemoteBranch(owner, repo, installationId, ref, sha) {
+            const dataString = {
+                "ref": `refs/heads/${ref}`, 
+                "sha": `${sha}`
+            };
+            const url = `https://api.github.com/repos/${owner}/${repo}/git/refs`;
+            const branch = await getRequest(installationId, url, dataString);
+            return branch;
         }
 
         async function createCommit(owner, repo, installationId, branch, sha, path, message, content) {
@@ -165,7 +156,6 @@ module.exports = {
             };
             return jwt.sign(payload, cert, { algorithm: 'RS256' });
         }
-
         return { asInstallation, getConfig, gitConfigExists, createBranch, createCommit, createPullRequest };
     }
 };
