@@ -810,6 +810,10 @@
     "backendHostName": {
       "type": "string",
       "value": "[reference(concat('Microsoft.Web/sites/', variables('backendName'))).defaultHostName]"
+    },
+    "githubAppFunctionName": {
+      "type": "string",
+      "value": "[variables('github_app_name')]"
     }
   }
 }
