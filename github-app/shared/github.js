@@ -1,114 +1,148 @@
-// const client_id =  process.env['GH_APP_CLIENT_ID'];
-// const client_secret = process.env['GH_APP_CLIENT_SECRET'];
-const request = require('request-promise');
-const octokit = require('@octokit/rest')();
 const jwt = require('jsonwebtoken');
+const path = require('path');
+const fs = require('fs');
+const { createAppAuth } = require("@octokit/auth-app");
+const { Base64 } = require("js-base64")
+
+const githubAppId = process.env['GITHUB_APP_ID'];
+const githubClientId = process.env['GITHUB_CLIENT_ID'];
+const githubClientSecret = process.env['GITHUB_CLIENT_SECRET'];
+const pem = fs.readFileSync(path.resolve(__dirname, './private-key.pem'));
+const auth = createAppAuth({
+    id: githubAppId,
+    privateKey: pem,
+    clientId: githubClientId,
+    clientSecret: githubClientSecret,
+});
 
 module.exports = {
-    //Gets the url for starting Oauth2 flow.
-    getIdentityRequestUrl: function(state, redirect_url) {
-        return 'https://github.com/login/oauth/authorize' + 
-            `?client_id=${client_id}&redirect_url=${redirect_url}` + 
-            `&scope=user&state=${state}&allow_signup=false`;
-    },
-    
-    //Retrieves access token by auth code (2nd stage of Oauth2).
-    getAccessToken: function(state, code, redirect_url) {
-        const location = 'https://github.com/login/oauth/access_token' +
-            `?client_id=${client_id}&client_secret=${client_secret}` +
-            `&code=${code}&state=${state}&redirect_url=${redirect_url}`;
-        const options = {
-            url: location,
-            method: 'POST'
-        };
-        return request(options);
-    },
-    
-    //Gets all the GitHub apps installed for the specified user (by his token).
-    getUserApps: function(token) {
-        const options = {
-            url: `https://api.github.com/user/installations?access_token=${token}`,
-            method: 'GET',
-            headers: { 
-                'Accept': 'application/vnd.github.machine-man-preview+json', 
-                'Content-Type': 'application/json',
-                'User-Agent': 'node.js'
+    createApp: function () {
+
+        let token = null;
+        async function getInstallationToken(installationId) {
+            if(!token) {
+                const response = await auth({
+                    type: "installation",
+                    installationId: installationId,
+                });
+                token = response.token;
             }
-        };
-        return request(options);
-    },
+            return token;
+        }
 
-    //Gets the current user account information.
-    getCurrentUser: function(token) {
-        const options = {
-            url: `https://api.github.com/user?access_token=${token}`,
-            method: 'GET',
-            headers: { 
-                'Accept': 'application/vnd.github.machine-man-preview+json', 
-                'Content-Type': 'application/json',
-                'User-Agent': 'node.js'
+        async function getRequest(installationId, url, data, method) {
+            const authToken = await getInstallationToken(installationId);
+            const rp = require('request-promise');
+            const options = {
+                method: method,
+                uri: url,
+                body: data,
+                json: true,
+                headers: {
+                    "Authorization": `token ${authToken}`,
+                    "User-Agent": "Github Experts"
+                }
+            };
+            const response = await rp(options);
+            return response;
+        }
+
+        async function getFile(owner, repo, installationId, path, branch) {
+            const url = `https://api.github.com/repos/repos/${owner}/${repo}/contents/${path}?ref=refs/heads/${branch}`;
+            const contents = await getRequest(installationId, url, null, "GET");
+            return contents;
+        }
+
+        async function gitConfigExists(owner, repo, installationId, path, branch) {
+            try {
+                const config = await getFile(owner, repo, installationId, path, branch);
+                if (config) {
+                    return true;
+                } else {
+                    return false;
+                }
+
+            } catch (error) {
+                if (error && error.message && error.message === "Not Found") {
+                    return false;
+                } else {
+                    Promise.reject(error);
+                }
             }
-        };
-        return request(options);
-    },
-
-    gitConfigExists: function(githubUsername, repoName, installationId) {
-        try {
-            //Trying to retrieve AppCenter apps linked to this repo.
-            return github_app.getConfig(githubUsername, repoName, installationId).then((config) => {
-                //If user chose to store appcenter-pr.json in his repo, we use it.
-                config = JSON.parse(Buffer.from(config.data.content, 'base64'));
-                return true;
-            }, () => {
-                return false;
-            });
-        } catch (error) {
-            Promise.reject(error);
-        }
-    },
-    
-    //Encapsulates GitHub logic accessed via GitHub app.
-    createApp: function ({ id, cert}) {
-        //Authenticates as the GitHub app by private key.
-        function asApp() {
-            octokit.authenticate({ type: 'integration', token: generateJwt(id, cert) });
-            return Promise.resolve(octokit);
         }
 
-        // Authenticates as the given installation of the GitHub app, which gives us access to actions in user repo.
-        function asInstallation(installationId) {
-            return createToken(installationId).then(res => {
-                octokit.authenticate({ type: 'token', token: res.data.token });
-                return octokit;
-            });
+        async function createBranch(owner, repo, installationId, configBranchName, mainBranchName) {
+            const branches = await listRemoteBranches(owner, repo, installationId);
+            const mainBranch = branches.filter(i => i.name == mainBranchName);
+            const existingConfigBranch = branches.filter(i => i.name == configBranchName);
+            if (mainBranch.length > 0 && existingConfigBranch.length == 0) {
+                const sha = mainBranch[0].commit.sha;
+                newBranch = await createRemoteBranch(owner, repo, installationId, configBranchName, sha);
+                return newBranch;
+            } else if (existingConfigBranch.length > 0) {
+                return existingConfigBranch[0];
+            } else {
+                return undefined;
+            }
         }
 
-        // https://developer.github.com/early-access/integrations/authentication/#as-an-installation
-        function createToken(installationId) {
-            return asApp().then(github => {
-                return github.apps.createInstallationToken({ installation_id: installationId });
-            });
+        async function listRemoteBranches(owner, repo, installationId) {
+            const url = `https://api.github.com/repos/${owner}/${repo}/branches`;
+            const branch = await getRequest(installationId, url, null, "GET");
+            return branch;
         }
 
-        //Gets json config file from the root of the user repository.
-        function getConfig(username, repo, installationId) {
-            return asInstallation(installationId).then(github => {
-                return github.repos.getContent({ owner: username, repo: repo, path: '/.github/github-experts.yml' });
-            });
+        async function createRemoteBranch(owner, repo, installationId, ref, sha) {
+            const dataString = {
+                "ref": `refs/heads/${ref}`, 
+                "sha": `${sha}`
+            };
+            const url = `https://api.github.com/repos/${owner}/${repo}/git/refs`;
+            const branch = await getRequest(installationId, url, dataString, "POST");
+            return branch;
         }
 
-        //Generates jwt signature for GitHub app authentication from the private key and GitHub app id.
+        async function createCommit(owner, repo, installationId, branch, sha, path, message, content) {
+            const encodedContent = Base64.encode(content);
+            const dataString = {
+                branch: branch,
+                sha: sha,
+                message: message,
+                content: encodedContent,
+                committer: {
+                    name: "Github Experts Bot",
+                    email: "githubexperts@microsoft.com",
+                },
+                author: {
+                    name: "Github Experts Bot",
+                    email: "githubexperts@microsoft.com",
+                }
+            };
+            const url = `https://api.github.com/repos/${owner}/${repo}/contents${path}`;
+            const commit = await getRequest(installationId, url, dataString, "PUT");
+            return commit;
+        }
+
+        async function createPullRequest(owner, repo, installationId, title, head, base, body) {
+            const dataString = {
+                title: title,
+                head: head,
+                base: base,
+                body: body
+            };
+            const url = `https://api.github.com/repos/${owner}/${repo}/pulls`;
+            const pr = await getRequest(installationId, url, dataString, "POST");
+            return pr;
+        }
+
         function generateJwt(id, cert) {
             const payload = {
                 iat: Math.floor(new Date() / 1000),       // Issued at time
                 exp: Math.floor(new Date() / 1000) + 60,  // JWT expiration time
                 iss: id                                   // Integration's GitHub id
             };
-
-            // Sign with RSA SHA256
             return jwt.sign(payload, cert, { algorithm: 'RS256' });
         }
-
-        return { asApp, asInstallation, createToken, getConfig, reportGithubStatus, status };
+        return { getFile, gitConfigExists, createBranch, createCommit, createPullRequest };
     }
 };

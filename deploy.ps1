@@ -33,7 +33,7 @@ $backendFunctionAppName = $deployment.properties.outputs.backendFunctionAppName.
 $backendHostName = $deployment.properties.outputs.backendHostName.value
 $frontendStorageAccountResourceId = $deployment.properties.outputs.frontendStorageAccountResourceId.value
 $frontendHostName = $deployment.properties.outputs.frontendHostName.value
-$githubAppFunctionName = = $deployment.properties.outputs.githubAppFunctionName.value
+$githubAppFunctionName = $deployment.properties.outputs.githubAppFunctionName.value
 
 $frontendStorageAccountConnectionString = az storage account show-connection-string `
   --ids $frontendStorageAccountResourceId `
