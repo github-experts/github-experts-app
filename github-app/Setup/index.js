@@ -34,9 +34,11 @@ module.exports = async function (context, request) {
                 const configExists = await githubApp.gitConfigExists(owner, repo, installationId, CONFIG_PATH, PULL_REQUEST_BRANCH);
                 context.log("Finished looking for: " + CONFIG_PATH);
                 if (!configExists) {
+                    context.log("Creating branch if doesn't exist");
                     let branch = await githubApp.createBranch(owner, repo, installationId, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH);
                     if (branch) {
                         const config = yamlConfig.generate(owner);
+                        context.log("Committing new configuration...");
                         const configCommit = await githubApp.createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.object.sha, CONFIG_PATH, "Yaml for Github Experts configuration", config);
                         if (configCommit) {
                             // Uncomment to modify the README directly
@@ -46,9 +48,11 @@ module.exports = async function (context, request) {
                             const PULL_REQUEST_TITLE = "Add Github Experts configuration";
                             const README_LINK = `
                             \`\`\`
-<a href="https://githubexpertsapi.azurewebsites.net/site/scheduler/${owner}/${repo}">Schedule time with an Expert!</a>
+[Schedule time with an Expert!](https://githubexpertsapi.azurewebsites.net/site/scheduler/${owner}/${repo})
                             \`\`\``;
                             const PR_MESSAGE = PULL_REQUEST_BODY + README_LINK;
+                            
+                            context.log("Opening pull request for new configuration...");
                             const pr = await githubApp.createPullRequest(owner, repo, installationId, PULL_REQUEST_TITLE, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH, PR_MESSAGE);
 
                             context.log(`Configuration created for: ${owner} (${installationId}) ${repo}`);

@@ -27,7 +27,6 @@ module.exports = {
                 });
                 token = response.token;
             }
-            console.log("TOKEN: " + token);
             return token;
         }
 
