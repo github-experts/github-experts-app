@@ -8,6 +8,12 @@ const githubAppId = process.env['GITHUB_APP_ID'];
 const githubClientId = process.env['GITHUB_CLIENT_ID'];
 const githubClientSecret = process.env['GITHUB_CLIENT_SECRET'];
 const pem = fs.readFileSync(path.resolve(__dirname, './private-key.pem'));
+console.log({
+    id: githubAppId,
+    privateKey: pem,
+    clientId: githubClientId,
+    clientSecret: githubClientSecret,
+});
 const auth = createAppAuth({
     id: githubAppId,
     privateKey: pem,
@@ -21,30 +27,31 @@ module.exports = {
         let token = null;
         async function getInstallationToken(installationId) {
             if (!token) {
-                    const response = await auth({
-                        type: "installation",
-                        installationId: installationId,
-                    });
-                    token = response.token;
+                const response = await auth({
+                    type: "installation",
+                    installationId: installationId,
+                });
+                token = response.token;
             }
+            console.log("TOKEN: " + token);
             return token;
         }
 
         async function getRequest(installationId, url, data, method) {
-                const authToken = await getInstallationToken(installationId);
-                const rp = require('request-promise');
-                const options = {
-                    method: method,
-                    uri: url,
-                    body: data,
-                    json: true,
-                    headers: {
-                        "Authorization": `token ${authToken}`,
-                        "User-Agent": "Github Experts"
-                    }
-                };
-                const response = await rp(options);
-                return response;
+            const authToken = await getInstallationToken(installationId);
+            const rp = require('request-promise');
+            const options = {
+                method: method,
+                uri: url,
+                body: data,
+                json: true,
+                headers: {
+                    "Authorization": `token ${authToken}`,
+                    "User-Agent": "Github Experts"
+                }
+            };
+            const response = await rp(options);
+            return response;
         }
 
         async function getFile(owner, repo, installationId, path, branch) {
