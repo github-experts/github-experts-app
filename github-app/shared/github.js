@@ -27,40 +27,31 @@ module.exports = {
         let token = null;
         async function getInstallationToken(installationId) {
             if (!token) {
-                try {
-                    const response = await auth({
-                        type: "installation",
-                        installationId: installationId,
-                    });
-                    token = response.token;
-                    console.log("NEW TOKEN: " + token);
-                } catch (error) {
-                    console.log("AUTH ERROR:" + error);
-                }
+                const response = await auth({
+                    type: "installation",
+                    installationId: installationId,
+                });
+                token = response.token;
             }
             console.log("TOKEN: " + token);
             return token;
         }
 
         async function getRequest(installationId, url, data, method) {
-            try {
-                const authToken = await getInstallationToken(installationId);
-                const rp = require('request-promise');
-                const options = {
-                    method: method,
-                    uri: url,
-                    body: data,
-                    json: true,
-                    headers: {
-                        "Authorization": `token ${authToken}`,
-                        "User-Agent": "Github Experts"
-                    }
-                };
-                const response = await rp(options);
-                return response;
-            } catch (error) {
-                console.log("REQUEST ERROR:" + error);
-            }
+            const authToken = await getInstallationToken(installationId);
+            const rp = require('request-promise');
+            const options = {
+                method: method,
+                uri: url,
+                body: data,
+                json: true,
+                headers: {
+                    "Authorization": `token ${authToken}`,
+                    "User-Agent": "Github Experts"
+                }
+            };
+            const response = await rp(options);
+            return response;
         }
 
         async function getFile(owner, repo, installationId, path, branch) {

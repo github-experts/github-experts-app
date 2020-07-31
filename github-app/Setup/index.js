@@ -1,5 +1,4 @@
 const githubRequests = require('../shared/github');
-const githubApp = githubRequests.createApp();
 const yamlConfig = require('../shared/yamlConfig');
 
 CONFIG_PATH = "/.github/github-experts.yml";
@@ -20,6 +19,7 @@ module.exports = async function (context, request) {
 
     context.log('Github webhook handler receiving incoming request...');
 
+    const githubApp = githubRequests.createApp();
     if (request && (request.body.action === "created" || request.body.action === "added") && request.body.installation.id && (request.body.repositories || request.body.repositories_added) && request.body.sender.login) {
 
         const installationId = request.body.installation.id;
