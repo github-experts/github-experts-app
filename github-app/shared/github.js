@@ -8,12 +8,6 @@ const githubAppId = process.env['GITHUB_APP_ID'];
 const githubClientId = process.env['GITHUB_CLIENT_ID'];
 const githubClientSecret = process.env['GITHUB_CLIENT_SECRET'];
 const pem = fs.readFileSync(path.resolve(__dirname, './private-key.pem'));
-console.log({
-    id: githubAppId,
-    privateKey: pem,
-    clientId: githubClientId,
-    clientSecret: githubClientSecret,
-});
 const auth = createAppAuth({
     id: githubAppId,
     privateKey: pem,
@@ -27,23 +21,16 @@ module.exports = {
         let token = null;
         async function getInstallationToken(installationId) {
             if (!token) {
-                try {
                     const response = await auth({
                         type: "installation",
                         installationId: installationId,
                     });
                     token = response.token;
-                    console.log("NEW TOKEN: " + token);
-                } catch (error) {
-                    console.log("AUTH ERROR:" + error);
-                }
             }
-            console.log("TOKEN: " + token);
             return token;
         }
 
         async function getRequest(installationId, url, data, method) {
-            try {
                 const authToken = await getInstallationToken(installationId);
                 const rp = require('request-promise');
                 const options = {
@@ -58,9 +45,6 @@ module.exports = {
                 };
                 const response = await rp(options);
                 return response;
-            } catch (error) {
-                console.log("REQUEST ERROR:" + error);
-            }
         }
 
         async function getFile(owner, repo, installationId, path, branch) {
