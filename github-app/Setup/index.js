@@ -20,10 +20,10 @@ module.exports = async function (context, request) {
 
     context.log('Github webhook handler receiving incoming request...');
 
-    if (request && request.body.installation.id && request.body.repositories.length > 0 && request.body.sender.login) {
+    if (request && (request.body.action === "created" || request.body.action === "added") && request.body.installation.id && (request.body.repositories || request.body.repositories_added) && request.body.sender.login) {
 
         const installationId = request.body.installation.id;
-        const repositories = request.body.repositories;
+        const repositories = request.body.repositories ? request.body.repositories : request.body.repositories_added;
         const owner = request.body.sender.login;
 
         for (i = 0; i < repositories.length; i++) {
@@ -32,14 +32,12 @@ module.exports = async function (context, request) {
 
             try {
                 const configExists = await githubApp.gitConfigExists(owner, repo, installationId, CONFIG_PATH, PULL_REQUEST_BRANCH);
-
+                context.log("Finished looking for: " + CONFIG_PATH);
                 if (!configExists) {
                     let branch = await githubApp.createBranch(owner, repo, installationId, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH);
-                    const githubExpertsConfigExists = await githubApp.gitConfigExists(owner, repo, installationId, CONFIG_PATH, PULL_REQUEST_HEAD);
-                    if (!githubExpertsConfigExists) {
+                    if (branch) {
                         const config = yamlConfig.generate(owner);
                         const configCommit = await githubApp.createCommit(owner, repo, installationId, PULL_REQUEST_HEAD, branch.object.sha, CONFIG_PATH, "Yaml for Github Experts configuration", config);
-
                         if (configCommit) {
                             // Uncomment to modify the README directly
                             //branch = await githubApp.createBranch(owner, repo, installationId, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH);
@@ -51,12 +49,12 @@ module.exports = async function (context, request) {
 <a href="https://githubexpertsapi.azurewebsites.net/site/scheduler/${owner}/${repo}">Schedule time with an Expert!</a>
                             \`\`\``;
                             const PR_MESSAGE = PULL_REQUEST_BODY + README_LINK;
-
                             const pr = await githubApp.createPullRequest(owner, repo, installationId, PULL_REQUEST_TITLE, PULL_REQUEST_HEAD, PULL_REQUEST_BRANCH, PR_MESSAGE);
+
                             context.log(`Configuration created for: ${owner} (${installationId}) ${repo}`);
                         }
                     } else {
-                        context.log(`Configuration already exists for: ${owner} (${installationId}) ${repo}`);
+                        context.log(`Branch exists or there was an error fetching details for: ${owner} (${installationId}) ${repo}`)
                     }
                 } else {
                     context.log(`Configuration already exists for: ${owner} (${installationId}) ${repo}`);
