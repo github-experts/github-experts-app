@@ -8,6 +8,12 @@ const githubAppId = process.env['GITHUB_APP_ID'];
 const githubClientId = process.env['GITHUB_CLIENT_ID'];
 const githubClientSecret = process.env['GITHUB_CLIENT_SECRET'];
 const pem = fs.readFileSync(path.resolve(__dirname, './private-key.pem'));
+console.log({
+    id: githubAppId,
+    privateKey: pem,
+    clientId: githubClientId,
+    clientSecret: githubClientSecret,
+});
 const auth = createAppAuth({
     id: githubAppId,
     privateKey: pem,
@@ -20,31 +26,41 @@ module.exports = {
 
         let token = null;
         async function getInstallationToken(installationId) {
-            if(!token) {
-                const response = await auth({
-                    type: "installation",
-                    installationId: installationId,
-                });
-                token = response.token;
+            if (!token) {
+                try {
+                    const response = await auth({
+                        type: "installation",
+                        installationId: installationId,
+                    });
+                    token = response.token;
+                    console.log("NEW TOKEN: " + token);
+                } catch (error) {
+                    console.log("AUTH ERROR:" + error);
+                }
             }
+            console.log("TOKEN: " + token);
             return token;
         }
 
         async function getRequest(installationId, url, data, method) {
-            const authToken = await getInstallationToken(installationId);
-            const rp = require('request-promise');
-            const options = {
-                method: method,
-                uri: url,
-                body: data,
-                json: true,
-                headers: {
-                    "Authorization": `token ${authToken}`,
-                    "User-Agent": "Github Experts"
-                }
-            };
-            const response = await rp(options);
-            return response;
+            try {
+                const authToken = await getInstallationToken(installationId);
+                const rp = require('request-promise');
+                const options = {
+                    method: method,
+                    uri: url,
+                    body: data,
+                    json: true,
+                    headers: {
+                        "Authorization": `token ${authToken}`,
+                        "User-Agent": "Github Experts"
+                    }
+                };
+                const response = await rp(options);
+                return response;
+            } catch (error) {
+                console.log("REQUEST ERROR:" + error);
+            }
         }
 
         async function getFile(owner, repo, installationId, path, branch) {
@@ -73,14 +89,16 @@ module.exports = {
 
         async function createBranch(owner, repo, installationId, configBranchName, mainBranchName) {
             const branches = await listRemoteBranches(owner, repo, installationId);
-            const mainBranch = branches.filter(i => i.name == mainBranchName);
-            const existingConfigBranch = branches.filter(i => i.name == configBranchName);
-            if (mainBranch.length > 0 && existingConfigBranch.length == 0) {
-                const sha = mainBranch[0].commit.sha;
-                newBranch = await createRemoteBranch(owner, repo, installationId, configBranchName, sha);
-                return newBranch;
-            } else if (existingConfigBranch.length > 0) {
-                return existingConfigBranch[0];
+            if (branches) {
+                const mainBranch = branches.filter(i => i.name == mainBranchName);
+                const existingConfigBranch = branches.filter(i => i.name == configBranchName);
+                if (mainBranch.length > 0 && existingConfigBranch.length == 0) {
+                    const sha = mainBranch[0].commit.sha;
+                    newBranch = await createRemoteBranch(owner, repo, installationId, configBranchName, sha);
+                    return newBranch;
+                } else {
+                    return undefined;
+                }
             } else {
                 return undefined;
             }
@@ -94,7 +112,7 @@ module.exports = {
 
         async function createRemoteBranch(owner, repo, installationId, ref, sha) {
             const dataString = {
-                "ref": `refs/heads/${ref}`, 
+                "ref": `refs/heads/${ref}`,
                 "sha": `${sha}`
             };
             const url = `https://api.github.com/repos/${owner}/${repo}/git/refs`;
