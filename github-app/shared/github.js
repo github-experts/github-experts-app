@@ -8,12 +8,6 @@ const githubAppId = process.env['GITHUB_APP_ID'];
 const githubClientId = process.env['GITHUB_CLIENT_ID'];
 const githubClientSecret = process.env['GITHUB_CLIENT_SECRET'];
 const pem = fs.readFileSync(path.resolve(__dirname, './private-key.pem'));
-console.log({
-    id: githubAppId,
-    privateKey: pem,
-    clientId: githubClientId,
-    clientSecret: githubClientSecret,
-});
 const auth = createAppAuth({
     id: githubAppId,
     privateKey: pem,
