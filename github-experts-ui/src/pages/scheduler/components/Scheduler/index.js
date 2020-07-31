@@ -38,28 +38,28 @@ const StyledPopUp = styled(({ className, appointmentData }) => {
       <div className="table-info d-flex">
         <div className="user pr-3">
           <p className="title h5">User</p>
-          <span className="IssueLabel IssueLabel--big mt-2 mb-2">Nilofer</span>
+          <span className="IssueLabel IssueLabel--big mt-2 mb-2">
+            {appointmentData.requestor}
+          </span>
         </div>
         <div className="date pr-3 flex-1">
           <p className="title h5">Date</p>
           <span className="IssueLabel IssueLabel--big mt-2 mb-2">
-            Thu 7/30 6:00AM
+            {moment(appointmentData.dateTime).format('ddd M/DD h:mm A')}
           </span>
         </div>
         <div className="cost">
           <p className="title h5">Cost</p>
-          <span className="IssueLabel IssueLabel--big mt-2 mb-2">$50</span>
+          <span className="IssueLabel IssueLabel--big mt-2 mb-2">
+            ${appointmentData.rate}
+          </span>
         </div>
       </div>
       <StyledRepoCell
         color="red"
-        repo={['patniko', 'github-experts-sample-repo']}
+        repo={[appointmentData.expert, appointmentData.repo]}
       />
-      <p className="description h5 pt-3">
-        Id interdum sit urna, tincidunt donec velit, commodo. Lacus molestie
-        nullam ultricies euismod semper et. Amet nulla quam gravida risus lorem
-        posuere nec morbi sem. Ut semper risus urna amet.
-      </p>
+      <p className="description h5 pt-3">{appointmentData.details}</p>
       <div className="button-group d-flex flex-justify-around flex-items-center flex-1">
         <ToggleButton>Cancel Session</ToggleButton>
         <ToggleButton className="btn-selected">Start Session</ToggleButton>
@@ -130,7 +130,7 @@ export const MyScheduler = ({ data }) => {
       />
       <WeekView startDayHour={6} />
       <Appointments
-        appointmentComponent={(props) => {
+        appointmentContentComponent={(props) => {
           return <Appointment {...props} />;
         }}
       />
